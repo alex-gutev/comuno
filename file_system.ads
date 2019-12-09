@@ -10,12 +10,24 @@
 pragma License (GPL);
 
 with Ada.Calendar;
+with Ada.Strings.Unbounded;
 
 --
 --  This package contains types describing various file system
 --  entities such as file types and attributes.
 --
 package File_System is
+   --
+   -- String type representing a path or path component.
+   --
+   -- This is sufficient to encode paths on GNAT, running on Unix like
+   -- systems, as a character can be any 8-bit value. However the
+   -- elements of the string array represent bytes rather than
+   -- characters.
+   --
+   subtype Path_String is String;
+   subtype Unbounded_Path_String is Ada.Strings.Unbounded.Unbounded_String;
+
    type File_Type is
      (Unknown, Regular, Directory, Link,
       FIFO, Character_Device, Block_Device, Socket, Whiteout);

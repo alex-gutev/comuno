@@ -30,7 +30,7 @@ package Dir_Lister is
    --
    --  Open the directory at Path for reading.
    --
-   procedure Open (This : out Dir_Lister; Path : in String);
+   procedure Open (This : out Dir_Lister; Path : in Path_String);
 
    procedure Finalize (This : in out Dir_Lister);
 

@@ -50,7 +50,7 @@ package Listing is
    --  Record in which the information about an entry is returned.
    --
    type Dir_Entry is record
-      Name : Unbounded_String;
+      Name : Unbounded_Path_String;
       Kind : File_Type;
    end record;
 
