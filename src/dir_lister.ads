@@ -10,6 +10,7 @@
 pragma License (GPL);
 
 with File_System; use File_System;
+with Paths; use Paths;
 with Listing; use Listing;
 with C_Types;
 
@@ -30,7 +31,7 @@ package Dir_Lister is
    --
    --  Open the directory at Path for reading.
    --
-   procedure Open (This : out Dir_Lister; Path : in Path_String);
+   procedure Open (This : out Dir_Lister; Path : in Paths.Path_String);
 
    procedure Finalize (This : in out Dir_Lister);
 

@@ -12,6 +12,7 @@ pragma License (GPL);
 with Ada.Finalization; use Ada.Finalization;
 with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
 with File_System; use File_System;
+with Paths;
 
 --
 -- Purpose:
@@ -50,7 +51,7 @@ package Listing is
    --  Record in which the information about an entry is returned.
    --
    type Dir_Entry is record
-      Name : Unbounded_Path_String;
+      Name : Paths.Unbounded_Path_String;
       Kind : File_Type;
    end record;
 

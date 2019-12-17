@@ -35,7 +35,7 @@ package body Dir_Lister is
    -- Creation and Finalization --
 
    use type C_Types.Handle_Ptr;
-   procedure Open (This : out Dir_Lister; Path : in Path_String) is
+   procedure Open (This : out Dir_Lister; Path : in Paths.Path_String) is
       Handle : C_Types.Handle_Ptr;
    begin
       Handle := Open_Dir(C.To_C(Path));
