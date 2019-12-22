@@ -64,7 +64,7 @@ package body Paths.Canonical_Paths is
    -- Path Predicates --
 
    function Is_Directory (P : Canonicalized_Path) return Boolean is
-     (P.Directory or P.Is_Root);
+     ((P.Directory and not P.Components.Is_Empty) or P.Is_Root);
 
    function Has_Directories (P : Canonicalized_Path) return Boolean is
    begin
@@ -162,7 +162,7 @@ package body Paths.Canonical_Paths is
             P1.Path_Components.Append(Vec.Element(Comp_Cursor));
          end loop;
 
-         P1.Directory := P2.Directory;
+         P1.Directory := P2.Is_Directory;
 
       else
          P1.Directory := True;
@@ -208,7 +208,7 @@ package body Paths.Canonical_Paths is
 
       else
          P1.Path_Components := P2.Path_Components;
-         P1.Directory := P2.Directory;
+         P1.Directory := P2.Is_Directory;
 
       end if;
 
