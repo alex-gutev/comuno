@@ -15,6 +15,8 @@ pragma License (GPL);
 --  Utility functions used in testing.
 --
 package Test_Util is
+   -- Assertions --
+
    --
    -- Assert
    --

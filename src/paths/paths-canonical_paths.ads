@@ -10,76 +10,41 @@
 pragma License (GPL);
 
 package Paths.Canonical_Paths is
-
-   type Canonicalized_Path is new Canonical_Path_Type with private;
+   --
+   -- Canonical_Path
+   --
+   --  Represents a path in a canonical representation.
+   --
+   type Canonical_Path is new Path with private;
 
 
    -- Constructors --
 
    --
-   -- Make_Path
+   -- Canonicalize
    --
-   --  Create a Path, given the vector of path components.
+   --  Change a path to a canonical representation.
    --
-   --  The Directory parameter is a Boolean which determines whether
-   --  the created path should represent a directory (True) or a file
-   --  (False).
+   --  Self components (.), empty components and non-leading parent
+   --  (..)  components are removed.
    --
-   function Make_Path (Components : Component_Vector; Directory : Boolean) return Canonicalized_Path;
-
-
-   -- Conversions --
-
-   function To_String (P : Canonicalized_Path) return Path_String;
-
-
-   -- Path Components --
-
-   function Components (P : Canonicalized_Path) return Component_Vector;
-   function Basename (P : Canonicalized_Path) return Path_String;
-
-
-   -- Path Predicates --
-
-   function Is_Directory (P : Canonicalized_Path) return Boolean;
-   function Has_Directories (P : Canonicalized_Path) return Boolean;
-
-   function Is_Empty (P : Canonicalized_Path) return Boolean;
-   function Is_Root (P : Canonicalized_Path) return Boolean;
-   function Is_Relative (P : Canonicalized_Path) return Boolean;
+   --  If Directory is True the resulting path represents a directory,
+   --  otherwise if Directory is False, the resulting path represents
+   --  a file.
+   --
+   function Canonicalize (P : Path'Class; Directory : Boolean := False) return Canonical_Path;
 
 
    -- Operations on Paths --
 
-   function Ensure_Directory (P : Canonicalized_Path; Directory : Boolean := True) return Canonicalized_Path;
-   procedure Ensure_Directory (P : in out Canonicalized_Path; Directory : in Boolean := True);
+   function Append (P1, P2 : Canonical_Path) return Canonical_Path;
+   procedure Append (P1 : in out Canonical_Path; P2 : in Canonical_Path);
 
-   function Append (P1, P2 : Canonicalized_Path) return Canonicalized_Path;
-   procedure Append (P1 : in out Canonicalized_Path; P2 : in Canonicalized_Path);
-
-   function Remove_Last_Component (P : Canonicalized_Path) return Canonicalized_Path;
-   procedure Remove_Last_Component (P : in out Canonicalized_Path);
-
-   function Merge (P1, P2 : Canonicalized_Path) return Canonicalized_Path;
-   procedure Merge (P1 : in out Canonicalized_Path; P2 : in Canonicalized_Path);
-
-   function Canonicalize (P : Canonicalized_Path; Directory : Boolean := False) return Canonical_Path;
-
-
-   -- Comparing Paths --
-
-   function "=" (P1 : Canonicalized_Path; P2 : Canonicalized_Path) return Boolean;
-
-   function Is_Subpath (Child : Canonicalized_Path; Parent : Canonicalized_Path; Check_Directory : Boolean := False) return Boolean;
-
-   function Is_Child (Child : Canonicalized_Path; Parent : Canonicalized_Path) return Boolean;
-
+   function Merge (P1, P2 : Canonical_Path) return Canonical_Path;
+   procedure Merge (P1 : in out Canonical_Path; P2 : in Canonical_Path);
 
 private
 
-   type Canonicalized_Path is new Canonical_Path_Type with record
-      Path_Components : Component_Vector;
-      Directory       : Boolean;
-   end record;
+   type Canonical_Path is new Path with null record;
 
 end Paths.Canonical_Paths;
