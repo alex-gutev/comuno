@@ -62,17 +62,17 @@ package C_Types is
    -- Record storing file attributes.
    --
    type Attributes  is record
-      Device : Attribute;
-      Inode : Attribute;
-      Mode : Attribute;
-      Num_Links : Attribute;
-      User : Attribute;
-      Group : Attribute;
-      Size : Attribute;
-      Block_Size : Attribute;
-
+      Device            : Attribute;
+      Inode             : Attribute;
+      Mode              : Attribute;
+      Kind              : Attribute;
+      Num_Links         : Attribute;
+      User              : Attribute;
+      Group             : Attribute;
+      Size              : Attribute;
+      Block_Size        : Attribute;
       Modification_Time : Timestamp;
-      Access_Time : Timestamp;
+      Access_Time       : Timestamp;
    end record;
    pragma Convention(C, Attributes);
 

@@ -105,6 +105,7 @@ int get_attributes(void *handle, const char *name, struct file_attributes *attrs
 	attrs->device = st.st_dev;
 	attrs->inode = st.st_ino;
 	attrs->mode = st.st_mode;
+	attrs->kind = dt_to_ft(IFTODT(st.st_mode));
 	attrs->num_links = st.st_nlink;
 	attrs->user = st.st_uid;
 	attrs->group = st.st_gid;

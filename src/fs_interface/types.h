@@ -53,6 +53,7 @@ struct file_attributes {
 	uint64_t device;
 	uint64_t inode;
 	uint64_t mode;
+	uint64_t kind;
 	uint64_t num_links;
 	uint64_t user;
 	uint64_t group;

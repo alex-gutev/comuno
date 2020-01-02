@@ -40,15 +40,16 @@ package File_System is
    -- Record storing file attributes
    --
    type Attributes is record
-      Device            : Device_ID;            -- ID of the device on which the file is located
-      Inode             : Inode_ID;             -- File Inode Number
-      Mode              : File_Mode;            -- File Mode storing file permissions
-      Num_Links         : Size_Type;            -- Number of links to the file
-      User              : User_ID;              -- File User ID
-      Group             : Group_ID;             -- File Group ID
-      Size              : Size_Type;            -- File Size
-      Block_Size        : Size_Type;            -- Optimal Block Size for File IO
-      Modification_Time : Ada.Calendar.Time;    -- Modification Time
-      Access_Time       : Ada.Calendar.Time;    -- Acces Time
+      Device            : Device_ID;         -- ID of the device on which the file is located
+      Inode             : Inode_ID;          -- File Inode Number
+      Mode              : File_Mode;         -- File Mode storing file permissions
+      Kind              : File_Type;         -- Type of file
+      Num_Links         : Size_Type;         -- Number of links to the file
+      User              : User_ID;           -- File User ID
+      Group             : Group_ID;          -- File Group ID
+      Size              : Size_Type;         -- File Size
+      Block_Size        : Size_Type;         -- Optimal Block Size for File IO
+      Modification_Time : Ada.Calendar.Time; -- Modification Time
+      Access_Time       : Ada.Calendar.Time; -- Acces Time
    end record;
 end File_System;
