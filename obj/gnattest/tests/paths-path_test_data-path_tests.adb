@@ -36,7 +36,7 @@ package body Paths.Path_Test_Data.Path_Tests is
    procedure Test_Make_Path_ef9d4a (Gnattest_T : in out Test_Path) renames Test_1_Make_Path;
 --  id:2.2/ef9d4a6d2cc4d874/Make_Path/1/0/
    procedure Test_1_Make_Path (Gnattest_T : in out Test_Path) is
-   --  paths.ads:74:4:Make_Path
+   --  paths.ads:75:4:Make_Path
 --  end read only
 
       pragma Unreferenced (Gnattest_T);
@@ -57,7 +57,7 @@ package body Paths.Path_Test_Data.Path_Tests is
    procedure Test_Make_Path_356523 (Gnattest_T : in out Test_Path) renames Test_2_Make_Path;
 --  id:2.2/356523d7d0a11021/Make_Path/0/0/
    procedure Test_2_Make_Path (Gnattest_T : in out Test_Path) is
-   --  paths.ads:75:4:Make_Path
+   --  paths.ads:76:4:Make_Path
 --  end read only
 
       pragma Unreferenced (Gnattest_T);
@@ -80,7 +80,7 @@ package body Paths.Path_Test_Data.Path_Tests is
    procedure Test_Make_Path_31762a (Gnattest_T : in out Test_Path) renames Test_3_Make_Path;
 --  id:2.2/31762a936940a635/Make_Path/0/0/
    procedure Test_3_Make_Path (Gnattest_T : in out Test_Path) is
-   --  paths.ads:95:4:Make_Path
+   --  paths.ads:96:4:Make_Path
 --  end read only
 
       pragma Unreferenced (Gnattest_T);
@@ -115,7 +115,7 @@ package body Paths.Path_Test_Data.Path_Tests is
    procedure Test_Make_Path_ecaa4f (Gnattest_T : in out Test_Path) renames Test_4_Make_Path;
 --  id:2.2/ecaa4f41d70dc5e1/Make_Path/0/0/
    procedure Test_4_Make_Path (Gnattest_T : in out Test_Path) is
-   --  paths.ads:96:4:Make_Path
+   --  paths.ads:97:4:Make_Path
 --  end read only
 
       pragma Unreferenced (Gnattest_T);
@@ -152,7 +152,7 @@ package body Paths.Path_Test_Data.Path_Tests is
    procedure Test_Make_Path_f46040 (Gnattest_T : in out Test_Path) renames Test_5_Make_Path;
 --  id:2.2/f46040cce201e5d6/Make_Path/0/0/
    procedure Test_5_Make_Path (Gnattest_T : in out Test_Path) is
-   --  paths.ads:107:4:Make_Path
+   --  paths.ads:108:4:Make_Path
 --  end read only
 
       pragma Unreferenced (Gnattest_T);
@@ -215,7 +215,7 @@ package body Paths.Path_Test_Data.Path_Tests is
    procedure Test_Make_Path_8e2b50 (Gnattest_T : in out Test_Path) renames Test_6_Make_Path;
 --  id:2.2/8e2b504bee2a9cfc/Make_Path/0/0/
    procedure Test_6_Make_Path (Gnattest_T : in out Test_Path) is
-   --  paths.ads:108:4:Make_Path
+   --  paths.ads:109:4:Make_Path
 --  end read only
 
       pragma Unreferenced (Gnattest_T);
@@ -277,7 +277,7 @@ package body Paths.Path_Test_Data.Path_Tests is
    procedure Test_To_String_05fc01 (Gnattest_T : in out Test_Path) renames Test_To_String;
 --  id:2.2/05fc01cb376fbe8b/To_String/1/0/
    procedure Test_To_String (Gnattest_T : in out Test_Path) is
-   --  paths.ads:118:4:To_String
+   --  paths.ads:119:4:To_String
 --  end read only
 
       procedure Test (Path : String; Result : String) is
@@ -303,7 +303,7 @@ package body Paths.Path_Test_Data.Path_Tests is
    procedure Test_Components_8df3c0 (Gnattest_T : in out Test_Path) renames Test_1_Components;
 --  id:2.2/8df3c0a9419c0d2b/Components/1/0/
    procedure Test_1_Components (Gnattest_T : in out Test_Path) is
-   --  paths.ads:129:4:Components
+   --  paths.ads:130:4:Components
 --  end read only
 
       function U (S : String) return Ada.Strings.Unbounded.Unbounded_String
@@ -367,7 +367,7 @@ package body Paths.Path_Test_Data.Path_Tests is
    procedure Test_Components_a82b3f (Gnattest_T : in out Test_Path) renames Test_2_Components;
 --  id:2.2/a82b3fab634fac00/Components/0/0/
    procedure Test_2_Components (Gnattest_T : in out Test_Path) is
-   --  paths.ads:130:4:Components
+   --  paths.ads:131:4:Components
 --  end read only
 
       function U (S : String) return Ada.Strings.Unbounded.Unbounded_String
@@ -429,7 +429,7 @@ package body Paths.Path_Test_Data.Path_Tests is
    procedure Test_Basename_2e0a84 (Gnattest_T : in out Test_Path) renames Test_Basename;
 --  id:2.2/2e0a845d0ccf930c/Basename/1/0/
    procedure Test_Basename (Gnattest_T : in out Test_Path) is
-   --  paths.ads:141:4:Basename
+   --  paths.ads:142:4:Basename
 --  end read only
 
       procedure Test (Path : String; Expected : String) is
@@ -466,7 +466,7 @@ package body Paths.Path_Test_Data.Path_Tests is
    procedure Test_Filename_3b3684 (Gnattest_T : in out Test_Path) renames Test_Filename;
 --  id:2.2/3b3684528618fec7/Filename/1/0/
    procedure Test_Filename (Gnattest_T : in out Test_Path) is
-   --  paths.ads:152:4:Filename
+   --  paths.ads:153:4:Filename
 --  end read only
 
       procedure Test (Path : String; Expected : String) is
@@ -507,7 +507,7 @@ package body Paths.Path_Test_Data.Path_Tests is
    procedure Test_Extension_6a3bad (Gnattest_T : in out Test_Path) renames Test_Extension;
 --  id:2.2/6a3badfb41fb22a8/Extension/1/0/
    procedure Test_Extension (Gnattest_T : in out Test_Path) is
-   --  paths.ads:162:4:Extension
+   --  paths.ads:163:4:Extension
 --  end read only
 
       procedure Test (Path : String; Expected : String) is
@@ -552,7 +552,7 @@ package body Paths.Path_Test_Data.Path_Tests is
    procedure Test_Is_Directory_a100ba (Gnattest_T : in out Test_Path) renames Test_Is_Directory;
 --  id:2.2/a100ba26a093e9f1/Is_Directory/1/0/
    procedure Test_Is_Directory (Gnattest_T : in out Test_Path) is
-   --  paths.ads:180:4:Is_Directory
+   --  paths.ads:181:4:Is_Directory
 --  end read only
 
       procedure Test (Path : Path_String; Expected : Boolean) is
@@ -582,7 +582,7 @@ package body Paths.Path_Test_Data.Path_Tests is
    procedure Test_Has_Directories_c13acb (Gnattest_T : in out Test_Path) renames Test_Has_Directories;
 --  id:2.2/c13acb12181614b2/Has_Directories/1/0/
    procedure Test_Has_Directories (Gnattest_T : in out Test_Path) is
-   --  paths.ads:193:4:Has_Directories
+   --  paths.ads:194:4:Has_Directories
 --  end read only
 
       procedure Test (Path : Path_String; Expected : Boolean) is
@@ -616,7 +616,7 @@ package body Paths.Path_Test_Data.Path_Tests is
    procedure Test_Is_Empty_c8072f (Gnattest_T : in out Test_Path) renames Test_Is_Empty;
 --  id:2.2/c8072fb86563d37d/Is_Empty/1/0/
    procedure Test_Is_Empty (Gnattest_T : in out Test_Path) is
-   --  paths.ads:201:4:Is_Empty
+   --  paths.ads:202:4:Is_Empty
 --  end read only
 
       procedure Test (Path : Path_String; Expected : Boolean) is
@@ -643,7 +643,7 @@ package body Paths.Path_Test_Data.Path_Tests is
    procedure Test_Is_Root_a731bb (Gnattest_T : in out Test_Path) renames Test_Is_Root;
 --  id:2.2/a731bbb089198278/Is_Root/1/0/
    procedure Test_Is_Root (Gnattest_T : in out Test_Path) is
-   --  paths.ads:214:4:Is_Root
+   --  paths.ads:215:4:Is_Root
 --  end read only
 
       procedure Test (Path : Path_String; Expected : Boolean) is
@@ -677,7 +677,7 @@ package body Paths.Path_Test_Data.Path_Tests is
    procedure Test_Is_Relative_5525cf (Gnattest_T : in out Test_Path) renames Test_Is_Relative;
 --  id:2.2/5525cfe63f263748/Is_Relative/1/0/
    procedure Test_Is_Relative (Gnattest_T : in out Test_Path) is
-   --  paths.ads:225:4:Is_Relative
+   --  paths.ads:226:4:Is_Relative
 --  end read only
 
       procedure Test (Path : Path_String; Expected : Boolean) is
@@ -713,7 +713,7 @@ package body Paths.Path_Test_Data.Path_Tests is
    procedure Test_Ensure_Directory_29d6a7 (Gnattest_T : in out Test_Path) renames Test_1_Ensure_Directory;
 --  id:2.2/29d6a79023041e60/Ensure_Directory/1/0/
    procedure Test_1_Ensure_Directory (Gnattest_T : in out Test_Path) is
-   --  paths.ads:243:4:Ensure_Directory
+   --  paths.ads:244:4:Ensure_Directory
 --  end read only
 
       procedure Test (Path : Path_String; Directory : Boolean; Expected : Path_String) is
@@ -753,7 +753,7 @@ package body Paths.Path_Test_Data.Path_Tests is
    procedure Test_Ensure_Directory_2010e8 (Gnattest_T : in out Test_Path) renames Test_2_Ensure_Directory;
 --  id:2.2/2010e8038024919d/Ensure_Directory/0/0/
    procedure Test_2_Ensure_Directory (Gnattest_T : in out Test_Path) is
-   --  paths.ads:244:4:Ensure_Directory
+   --  paths.ads:245:4:Ensure_Directory
 --  end read only
 
       procedure Test (Path : Path_String; Directory : Boolean; Expected : Path_String) is
@@ -794,7 +794,7 @@ package body Paths.Path_Test_Data.Path_Tests is
    procedure Test_Append_26bf90 (Gnattest_T : in out Test_Path) renames Test_1_Append;
 --  id:2.2/26bf9008adf6766c/Append/1/0/
    procedure Test_1_Append (Gnattest_T : in out Test_Path) is
-   --  paths.ads:255:4:Append
+   --  paths.ads:256:4:Append
 --  end read only
 
       pragma Unreferenced (Gnattest_T);
@@ -832,7 +832,7 @@ package body Paths.Path_Test_Data.Path_Tests is
    procedure Test_Append_c30aa7 (Gnattest_T : in out Test_Path) renames Test_2_Append;
 --  id:2.2/c30aa79582e32e23/Append/0/0/
    procedure Test_2_Append (Gnattest_T : in out Test_Path) is
-   --  paths.ads:256:4:Append
+   --  paths.ads:257:4:Append
 --  end read only
 
       pragma Unreferenced (Gnattest_T);
@@ -872,7 +872,7 @@ package body Paths.Path_Test_Data.Path_Tests is
    procedure Test_Remove_Last_Component_0b58ad (Gnattest_T : in out Test_Path) renames Test_1_Remove_Last_Component;
 --  id:2.2/0b58ad5b8e8c8a01/Remove_Last_Component/1/0/
    procedure Test_1_Remove_Last_Component (Gnattest_T : in out Test_Path) is
-   --  paths.ads:272:4:Remove_Last_Component
+   --  paths.ads:273:4:Remove_Last_Component
 --  end read only
 
       procedure Test (Path : Path_String; Expected : Path_String) is
@@ -905,7 +905,7 @@ package body Paths.Path_Test_Data.Path_Tests is
    procedure Test_Remove_Last_Component_9aa454 (Gnattest_T : in out Test_Path) renames Test_2_Remove_Last_Component;
 --  id:2.2/9aa45453e65d9f53/Remove_Last_Component/0/0/
    procedure Test_2_Remove_Last_Component (Gnattest_T : in out Test_Path) is
-   --  paths.ads:273:4:Remove_Last_Component
+   --  paths.ads:274:4:Remove_Last_Component
 --  end read only
 
       procedure Test (Path : Path_String; Expected : Path_String) is
@@ -940,7 +940,7 @@ package body Paths.Path_Test_Data.Path_Tests is
    procedure Test_Merge_51c348 (Gnattest_T : in out Test_Path) renames Test_1_Merge;
 --  id:2.2/51c348cb40ce9d90/Merge/1/0/
    procedure Test_1_Merge (Gnattest_T : in out Test_Path) is
-   --  paths.ads:286:4:Merge
+   --  paths.ads:287:4:Merge
 --  end read only
 
       pragma Unreferenced (Gnattest_T);
@@ -979,7 +979,7 @@ package body Paths.Path_Test_Data.Path_Tests is
    procedure Test_Merge_230f40 (Gnattest_T : in out Test_Path) renames Test_2_Merge;
 --  id:2.2/230f409c6fbd7ad5/Merge/0/0/
    procedure Test_2_Merge (Gnattest_T : in out Test_Path) is
-   --  paths.ads:287:4:Merge
+   --  paths.ads:288:4:Merge
 --  end read only
 
       pragma Unreferenced (Gnattest_T);
@@ -1020,7 +1020,7 @@ package body Paths.Path_Test_Data.Path_Tests is
    procedure Test_Equal_1a15d1 (Gnattest_T : in out Test_Path) renames Test_Equal;
 --  id:2.2/1a15d1dbd895fce7/Equal/1/0/
    procedure Test_Equal (Gnattest_T : in out Test_Path) is
-   --  paths.ads:298:4:"="
+   --  paths.ads:299:4:"="
 --  end read only
 
       procedure Test (P1, P2 : Path_String; Expected : Boolean := True) is
@@ -1055,7 +1055,7 @@ package body Paths.Path_Test_Data.Path_Tests is
    procedure Test_Is_Subpath_ff4b23 (Gnattest_T : in out Test_Path) renames Test_Is_Subpath;
 --  id:2.2/ff4b23da36058932/Is_Subpath/1/0/
    procedure Test_Is_Subpath (Gnattest_T : in out Test_Path) is
-   --  paths.ads:313:4:Is_Subpath
+   --  paths.ads:314:4:Is_Subpath
 --  end read only
 
       procedure Test (P1, P2 : Path_String; Expected : Boolean := True) is
@@ -1095,7 +1095,7 @@ package body Paths.Path_Test_Data.Path_Tests is
    procedure Test_Is_Child_a8b575 (Gnattest_T : in out Test_Path) renames Test_Is_Child;
 --  id:2.2/a8b57585827a5e48/Is_Child/1/0/
    procedure Test_Is_Child (Gnattest_T : in out Test_Path) is
-   --  paths.ads:326:4:Is_Child
+   --  paths.ads:327:4:Is_Child
 --  end read only
 
       procedure Test (P1, P2 : Path_String; Expected : Boolean := True) is
@@ -1126,6 +1126,35 @@ package body Paths.Path_Test_Data.Path_Tests is
 
 --  begin read only
    end Test_Is_Child;
+--  end read only
+
+
+--  begin read only
+   procedure Test_Hash (Gnattest_T : in out Test_Path);
+   procedure Test_Hash_762a81 (Gnattest_T : in out Test_Path) renames Test_Hash;
+--  id:2.2/762a810ce281fd4c/Hash/1/0/
+   procedure Test_Hash (Gnattest_T : in out Test_Path) is
+   --  paths.ads:338:4:Hash
+--  end read only
+
+      use type Ada.Containers.Hash_Type;
+      subtype Hash_Type is Ada.Containers.Hash_Type;
+
+      procedure Assert_Equal_Hash is new Test_Util.Assert_Equal (Hash_Type, Hash_Type'Image);
+
+   begin
+
+      Set_Path(Gnattest_T.Fixture.all, "/foo/bar/baz.txt", False);
+
+      declare
+         Copy : Path'Class := Gnattest_T.Fixture.all;
+
+      begin
+         Assert_Equal_Hash (Gnattest_T.Fixture.Hash, Copy.Hash);
+      end;
+
+--  begin read only
+   end Test_Hash;
 --  end read only
 
 --  begin read only

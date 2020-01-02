@@ -15,12 +15,13 @@ pragma License (GPL);
 --  Utility functions used in testing.
 --
 package Test_Util is
+
    -- Assertions --
 
    --
    -- Assert
    --
-   --  Asserts that Condition is True, using
+   --  Assert that Condition is True, using
    --  AUnit.Assertions.Assert. If Condition is False, displays
    --  Message.
    --
@@ -33,7 +34,25 @@ package Test_Util is
    --
    -- Assert_Equal_String
    --
-   --  Asserts that Actual = Expected. If Actual /= Expected, Message
+   --  Assert that Actual = Expected, using the provided "="
+   --  function. If Actual /= Expected, Message is printed followed by
+   --  the value of Actual and Expected, which are converted to
+   --  strings using the Image function.
+   --
+   --  If Fail is true, the current test function is aborted. If Fail
+   --  is false, the current test function is not aborted and the
+   --  remaining tests are performed.
+   --
+   generic
+      type Test_Type(<>) is private;
+      with function Image (Value : Test_Type) return String;
+      with function "="(Actual, Expected : Test_Type) return Boolean is <>;
+   procedure Assert_Equal (Actual, Expected : Test_Type; Message : String := ""; Fail : Boolean := False);
+
+   --
+   -- Assert_Equal_String
+   --
+   --  Assert that Actual = Expected. If Actual /= Expected, Message
    --  is printed followed by the value of Actual and Expected.
    --
    --  If Fail is true, the current test function is aborted. If Fail
@@ -41,4 +60,5 @@ package Test_Util is
    --  remaining tests are performed.
    --
    procedure Assert_Equal_String (Actual, Expected : String; Message : String := ""; Fail : Boolean := False);
+
 end Test_Util;

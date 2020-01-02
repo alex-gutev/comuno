@@ -12,6 +12,7 @@ pragma License (GPL);
 with Ada.Strings; use Ada.Strings;
 with Ada.Strings.Fixed; use Ada.Strings.Fixed;
 with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
+with Ada.Strings.Unbounded.Hash;
 with Ada.Containers.Vectors;
 
 package body Paths is
@@ -352,5 +353,11 @@ package body Paths is
 
       return False;
    end Is_Child;
+
+
+   -- Hashing --
+
+   function Hash (P : Path) return Ada.Containers.Hash_Type is
+      (Ada.Strings.Unbounded.Hash(P.Name));
 
 end Paths;

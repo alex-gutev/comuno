@@ -10,6 +10,7 @@
 pragma License (GPL);
 
 with Ada.Strings.Unbounded;
+with Ada.Containers;
 with Ada.Containers.Vectors;
 
 --
@@ -324,6 +325,17 @@ package Paths is
    --  corresponding component of Parent.
    --
    function Is_Child (Child : Path; Parent : Path) return Boolean;
+
+
+   -- Hashing --
+
+   --
+   -- Hash
+   --
+   --  Compute a hash code for the Path for use in hash table
+   --  containers.
+   --
+   function Hash (P : Path) return Ada.Containers.Hash_Type;
 
 private
 

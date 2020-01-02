@@ -28,6 +28,13 @@ package body Test_Util is
    end Assert;
 
 
+   procedure Assert_Equal (Actual, Expected : Test_Type; Message : String := ""; Fail : Boolean := False) is
+   begin
+      Assert(Actual = Expected,
+             Message & ": " & Image(Actual) & " /= " & Image(Expected),
+             Fail);
+   end Assert_Equal;
+
    procedure Assert_Equal_String (Actual, Expected : String; Message : String := ""; Fail : Boolean := False)
    is begin
       Assert(Actual = Expected,
