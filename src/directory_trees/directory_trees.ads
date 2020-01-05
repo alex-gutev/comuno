@@ -48,6 +48,14 @@ package Directory_Trees is
    --
    Entry_Not_In_Tree : exception;
 
+   --
+   -- Not_Subpath
+   --
+   --  Exception to be raised when attempting to set the subpath to a
+   --  path which does not correspond to a subdirectory in the tree
+   --
+   Not_Subdirectory : exception;
+
 
    -- Operations --
 
