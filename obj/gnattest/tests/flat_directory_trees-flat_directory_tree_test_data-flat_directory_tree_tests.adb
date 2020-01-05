@@ -402,7 +402,7 @@ package body Flat_Directory_Trees.Flat_Directory_Tree_Test_Data.Flat_Directory_T
 
          Test_Util.Assert
            (not Visited(Key),
-            "Iterating over entry" & Subpath(Ent).To_String & " Twice",
+            "Iterating over entry " & Subpath(Ent).To_String & " Twice",
             Fail => True);
 
          Visited(Key) := True;
