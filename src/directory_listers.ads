@@ -12,7 +12,8 @@ pragma License (GPL);
 with File_System; use File_System;
 with Paths; use Paths;
 with Listing; use Listing;
-with C_Types;
+
+private with C_Types;
 
 --
 -- Purpose:
@@ -20,9 +21,9 @@ with C_Types;
 --  This package provides an implementation of the Lister interface
 --  for regular directories.
 --
-package Dir_Lister is
-   type Dir_Lister is new Lister with private;
-   type Dir_Lister_Ptr is access all Dir_Lister'Class;
+package Directory_Listers is
+   type Directory_Lister is new Lister with private;
+   type Directory_Lister_Ptr is access all Directory_Lister'Class;
 
    -- Creation and Finalization --
 
@@ -31,20 +32,20 @@ package Dir_Lister is
    --
    --  Open the directory at Path for reading.
    --
-   procedure Open (This : out Dir_Lister; Path : in Paths.Path_String);
+   procedure Open (This : out Directory_Lister; Path : in Paths.Path_String);
 
-   procedure Finalize (This : in out Dir_Lister);
+   procedure Finalize (This : in out Directory_Lister);
 
 
    -- Lister Operations --
 
-   function Read_Entry (This : in out Dir_Lister; Ent : out Dir_Entry) return Boolean;
-   function Entry_Attributes (This : in out Dir_Lister) return Attributes;
+   function Read_Entry (This : in out Directory_Lister; Ent : out Dir_Entry) return Boolean;
+   function Entry_Attributes (This : in out Directory_Lister) return Attributes;
 
 private
-   type Dir_Lister is new Lister with
+   type Directory_Lister is new Lister with
       record
          Handle         : C_Types.Handle_Ptr;
          Last_Entry     : Dir_Entry;
       end record;
-end Dir_Lister;
+end Directory_Listers;

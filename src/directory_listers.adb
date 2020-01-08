@@ -13,7 +13,7 @@ with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
 with Interfaces.C;
 with Interfaces.C.Strings;
 
-package body Dir_Lister is
+package body Directory_Listers is
    package C renames Interfaces.C;
 
    -- Imported C Functions --
@@ -28,26 +28,26 @@ package body Dir_Lister is
    pragma Import(C, Get_Entry);
 
    function Get_Attributes (Handle : in C_Types.Handle_Ptr; Name : in C.Char_Array; Attrs : out C_Types.Attributes)
-			   return C.Int;
+                           return C.Int;
    pragma Import(C, Get_Attributes);
 
 
    -- Creation and Finalization --
 
    use type C_Types.Handle_Ptr;
-   procedure Open (This : out Dir_Lister; Path : in Paths.Path_String) is
+   procedure Open (This : out Directory_Lister; Path : in Paths.Path_String) is
       Handle : C_Types.Handle_Ptr;
    begin
       Handle := Open_Dir(C.To_C(Path));
 
       if Handle = C.Strings.Null_Ptr then
-	 raise Open_Dir_Error;
+         raise Open_Dir_Error;
       end if;
 
       This.Handle := Handle;
    end Open;
 
-   procedure Finalize (This : in out Dir_Lister) is
+   procedure Finalize (This : in out Directory_Lister) is
    begin
       Close_Dir(This.Handle);
    end Finalize;
@@ -56,28 +56,28 @@ package body Dir_Lister is
    -- Lister Operations --
 
    use type C.Int;
-   function Read_Entry (This : in out Dir_Lister; Ent : out Dir_Entry) return Boolean is
+   function Read_Entry (This : in out Directory_Lister; Ent : out Dir_Entry) return Boolean is
       C_Ent : C_Types.Dir_Entry;
    begin
       if Get_Entry(This.Handle, C_Ent) /= 0 then
-	 Ent.Name := To_Unbounded_String(C.Strings.Value(C_Ent.Name));
-	 Ent.Kind := File_Type'Val(C_Ent.Kind);
+         Ent.Name := To_Unbounded_String(C.Strings.Value(C_Ent.Name));
+         Ent.Kind := File_Type'Val(C_Ent.Kind);
 
-	 This.Last_Entry := Ent;
-	 return True;
+         This.Last_Entry := Ent;
+         return True;
       end if;
 
       return False;
    end Read_Entry;
 
-   function Entry_Attributes (This : in out Dir_Lister) return Attributes is
+   function Entry_Attributes (This : in out Directory_Lister) return Attributes is
       C_Attrs : C_Types.Attributes;
    begin
       if Get_Attributes(This.Handle, C.To_C(To_String(This.Last_Entry.Name)), C_Attrs) = 0
       then
-	 raise Get_Attributes_Error;
+         raise Get_Attributes_Error;
       end if;
 
       return C_Types.Convert(C_Attrs);
    end Entry_Attributes;
-end Dir_Lister;
+end Directory_Listers;
