@@ -42,7 +42,7 @@ package Listing is
    --  The lister object should release all file system resources,
    --  held by the object, in its Finalize operation.
    --
-   type Lister is abstract new Controlled with null record;
+   type Lister is abstract new Limited_Controlled with null record;
    type Lister_Ptr is access all Lister'Class;
 
    --
