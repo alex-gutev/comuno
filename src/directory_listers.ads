@@ -1,4 +1,4 @@
---  Copyright (C) 2019 Alexander Gutev
+--  Copyright (C) 2019-2020 Alexander Gutev
 --
 --  This library is free software;  you can redistribute it and/or modify it
 --  under terms of the  GNU General Public License  as published by the Free
@@ -43,9 +43,11 @@ package Directory_Listers is
    function Entry_Attributes (This : in out Directory_Lister) return Attributes;
 
 private
+
    type Directory_Lister is new Lister with
       record
          Handle         : C_Types.Handle_Ptr;
          Last_Entry     : Dir_Entry;
       end record;
+
 end Directory_Listers;

@@ -1,4 +1,4 @@
---  Copyright (C) 2019 Alexander Gutev
+--  Copyright (C) 2019-2020 Alexander Gutev
 --
 --  This library is free software;  you can redistribute it and/or modify it
 --  under terms of the  GNU General Public License  as published by the Free
@@ -49,7 +49,9 @@ package body Directory_Listers is
 
    procedure Finalize (This : in out Directory_Lister) is
    begin
-      Close_Dir(This.Handle);
+      if This.Handle /= C.Strings.Null_Ptr then
+         Close_Dir(This.Handle);
+      end if;
    end Finalize;
 
 
@@ -58,14 +60,23 @@ package body Directory_Listers is
    use type C.Int;
    function Read_Entry (This : in out Directory_Lister; Ent : out Dir_Entry) return Boolean is
       C_Ent : C_Types.Dir_Entry;
-   begin
-      if Get_Entry(This.Handle, C_Ent) /= 0 then
-         Ent.Name := To_Unbounded_String(C.Strings.Value(C_Ent.Name));
-         Ent.Kind := File_Type'Val(C_Ent.Kind);
 
-         This.Last_Entry := Ent;
-         return True;
-      end if;
+   begin
+      while Get_Entry(This.Handle, C_Ent) /= 0 loop
+         declare
+            Name : String := C.Strings.Value(C_Ent.Name);
+
+         begin
+            if Name /= "." and Name /= ".." then
+               Ent.Name := To_Unbounded_String(C.Strings.Value(C_Ent.Name));
+               Ent.Kind := File_Type'Val(C_Ent.Kind);
+
+               This.Last_Entry := Ent;
+
+               return True;
+            end if;
+         end;
+      end loop;
 
       return False;
    end Read_Entry;
