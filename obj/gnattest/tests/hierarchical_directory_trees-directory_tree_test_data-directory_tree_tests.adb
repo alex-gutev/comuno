@@ -50,7 +50,7 @@ package body Hierarchical_Directory_Trees.Directory_Tree_Test_Data.Directory_Tre
    procedure Test_Add_Entry_63afff (Gnattest_T : in out Test_Directory_Tree) renames Test_Add_Entry;
 --  id:2.2/63afff00f846b632/Add_Entry/1/0/
    procedure Test_Add_Entry (Gnattest_T : in out Test_Directory_Tree) is
-   --  hierarchical_directory_trees.ads:25:4:Add_Entry
+   --  hierarchical_directory_trees.ads:39:4:Add_Entry
 --  end read only
 
       pragma Unreferenced (Gnattest_T);
@@ -198,7 +198,7 @@ package body Hierarchical_Directory_Trees.Directory_Tree_Test_Data.Directory_Tre
    procedure Test_Subpath_274e69 (Gnattest_T : in out Test_Directory_Tree) renames Test_Subpath;
 --  id:2.2/274e69df42372750/Subpath/1/0/
    procedure Test_Subpath (Gnattest_T : in out Test_Directory_Tree) is
-   --  hierarchical_directory_trees.ads:28:4:Subpath
+   --  hierarchical_directory_trees.ads:42:4:Subpath
 --  end read only
 
       pragma Unreferenced (Gnattest_T);
@@ -219,7 +219,7 @@ package body Hierarchical_Directory_Trees.Directory_Tree_Test_Data.Directory_Tre
    procedure Test_Set_Subpath_e2dd9e (Gnattest_T : in out Test_Directory_Tree) renames Test_Set_Subpath;
 --  id:2.2/e2dd9e0e715f4d99/Set_Subpath/1/0/
    procedure Test_Set_Subpath (Gnattest_T : in out Test_Directory_Tree) is
-   --  hierarchical_directory_trees.ads:30:4:Set_Subpath
+   --  hierarchical_directory_trees.ads:44:4:Set_Subpath
 --  end read only
 
       pragma Unreferenced (Gnattest_T);
@@ -276,7 +276,7 @@ package body Hierarchical_Directory_Trees.Directory_Tree_Test_Data.Directory_Tre
    procedure Test_Is_Subdir_2bcc8d (Gnattest_T : in out Test_Directory_Tree) renames Test_Is_Subdir;
 --  id:2.2/2bcc8d88bb7f1b30/Is_Subdir/1/0/
    procedure Test_Is_Subdir (Gnattest_T : in out Test_Directory_Tree) is
-   --  hierarchical_directory_trees.ads:33:4:Is_Subdir
+   --  hierarchical_directory_trees.ads:47:4:Is_Subdir
 --  end read only
 
       pragma Unreferenced (Gnattest_T);
@@ -324,7 +324,7 @@ package body Hierarchical_Directory_Trees.Directory_Tree_Test_Data.Directory_Tre
    procedure Test_At_Basedir_878d17 (Gnattest_T : in out Test_Directory_Tree) renames Test_At_Basedir;
 --  id:2.2/878d17ebe0f3f2d6/At_Basedir/1/0/
    procedure Test_At_Basedir (Gnattest_T : in out Test_Directory_Tree) is
-   --  hierarchical_directory_trees.ads:35:4:At_Basedir
+   --  hierarchical_directory_trees.ads:49:4:At_Basedir
 --  end read only
 
       pragma Unreferenced (Gnattest_T);
@@ -354,7 +354,7 @@ package body Hierarchical_Directory_Trees.Directory_Tree_Test_Data.Directory_Tre
    procedure Test_Has_Entry_e73fef (Gnattest_T : in out Test_Directory_Tree) renames Test_Has_Entry;
 --  id:2.2/e73fefe8f46383d9/Has_Entry/1/0/
    procedure Test_Has_Entry (Gnattest_T : in out Test_Directory_Tree) is
-   --  hierarchical_directory_trees.ads:38:4:Has_Entry
+   --  hierarchical_directory_trees.ads:52:4:Has_Entry
 --  end read only
 
       pragma Unreferenced (Gnattest_T);
@@ -401,7 +401,7 @@ package body Hierarchical_Directory_Trees.Directory_Tree_Test_Data.Directory_Tre
    procedure Test_Get_Entry_0cf739 (Gnattest_T : in out Test_Directory_Tree) renames Test_Get_Entry;
 --  id:2.2/0cf73985b33f0f35/Get_Entry/1/0/
    procedure Test_Get_Entry (Gnattest_T : in out Test_Directory_Tree) is
-   --  hierarchical_directory_trees.ads:40:4:Get_Entry
+   --  hierarchical_directory_trees.ads:54:4:Get_Entry
 --  end read only
 
       pragma Unreferenced (Gnattest_T);
@@ -476,8 +476,8 @@ package body Hierarchical_Directory_Trees.Directory_Tree_Test_Data.Directory_Tre
    procedure Test_Iterate_554263 (Gnattest_T : in out Test_Directory_Tree) renames Test_Iterate;
 --  id:2.2/554263ce76d46b8e/Iterate/1/0/
    procedure Test_Iterate (Gnattest_T : in out Test_Directory_Tree) is
-      --  hierarchical_directory_trees.ads:43:4:Iterate
-      --  end read only
+   --  hierarchical_directory_trees.ads:57:4:Iterate
+--  end read only
 
       pragma Unreferenced (Gnattest_T);
 
@@ -642,7 +642,7 @@ package body Hierarchical_Directory_Trees.Directory_Tree_Test_Data.Directory_Tre
             Subpath(Bar_Entries(Index)).To_String & " not visited");
       end loop;
 
-      --  begin read only
+--  begin read only
    end Test_Iterate;
 --  end read only
 
