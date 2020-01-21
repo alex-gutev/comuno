@@ -13,7 +13,7 @@ package body Task_States is
 
    -- Shared Task State --
 
-   protected body Task_State_Object is
+   protected body Task_State is
 
       -- Reference Counting --
 
@@ -84,18 +84,20 @@ package body Task_States is
          end if;
       end Cancel;
 
-   end Task_State_Object;
+   end Task_State;
 
+
+   --- Task State Reference ---
 
    -- Constructor --
 
-   function Create return Task_State is
-      (Controlled with Object => new Task_State_Object);
+   function Create return Task_State_Ref is
+      (Controlled with Object => new Task_State);
 
 
    -- Memory Management --
 
-   procedure Finalize (State : in out Task_State) is
+   procedure Finalize (State : in out Task_State_Ref) is
       Count : Refcount;
 
    begin
@@ -109,45 +111,66 @@ package body Task_States is
       end if;
    end Finalize;
 
-   procedure Adjust (State : in out Task_State) is
+   procedure Adjust (State : in out Task_State_Ref) is
    begin
       if State.Object /= null then
          State.Object.Acquire;
       end if;
    end Adjust;
 
-   function Is_Empty (State : Task_State) return Boolean is
+   function Is_Empty (State : Task_State_Ref) return Boolean is
      (State.Object = null);
 
 
-   -- Wrapper Functions --
+   --- Background State ---
 
-   procedure Enter_Foreground (State : Task_State) is
+   function Get_Background_State (State : Task_State_Ref'Class) return Background_State is
+   begin
+      return New_State : Background_State do
+         New_State.Object := State.Object;
+         Adjust(New_State);
+      end return;
+   end Get_Background_State;
+
+
+   procedure Enter_Foreground (State : Background_State) is
    begin
       State.Object.Enter_Foreground;
    end Enter_Foreground;
 
-   procedure Exit_Foreground (State : Task_State) is
+   procedure Exit_Foreground (State : Background_State) is
    begin
       State.Object.Exit_Foreground;
    end Exit_Foreground;
 
-   procedure Test_Cancelled (State : Task_State) is
+
+   procedure Test_Cancelled (State : Background_State) is
    begin
       State.Object.Test_Cancelled;
    end Test_Cancelled;
 
-   function Is_Cancelled (State : Task_State) return Boolean is
+   function Is_Cancelled (State : Background_State) return Boolean is
    begin
       return State.Object.Is_Cancelled;
    end Is_Cancelled;
 
-   procedure Cancel (State : Task_State) is
+
+   --- Cancellation State ---
+
+   function Get_Cancellation_State (State : Task_State_Ref'Class) return Cancellation_State
+   is begin
+      return New_State : Cancellation_State do
+         New_State.Object := State.Object;
+         Adjust(New_State);
+      end return;
+   end Get_Cancellation_State;
+
+   procedure Cancel (State : Cancellation_State) is
    begin
       State.Object.Cancel;
    end Cancel;
 
-   procedure Cancel (State : Task_State; C : Continuation'Class) is
+   procedure Cancel (State : Cancellation_State; C : Continuation'Class) is
    begin
       State.Object.Cancel(C);
    end Cancel;

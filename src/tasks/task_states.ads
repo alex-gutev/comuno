@@ -58,19 +58,28 @@ private with Ada.Unchecked_Deallocation;
 --  - When initiating a new background task, a Task_State object
 --    should be created for it using the Create function.
 --
---  - Enter_Foreground should be called (to switch to the foreground)
---    state prior to communicating results with a foreground
---    task. Note: The actual communication may occur on the background
---    task.
+--  - The background task should obtain a Background_State object,
+--    from the Task_State object, using Get_Background_State.
 --
---  - Exit_Foreground should be called after communicating the
---    results, after which the task may resume its work in the
---    background.
+--    - Enter_Foreground should be called (to switch to the foreground
+--      state), by the background task, prior to communicating results
+--      with a foreground task. Note: The actual communication may
+--      occur on the background task.
 --
---  - The task should check whether it is Cancelled using Is_Cancelled
---    or Test_Cancelled.
+--    - Exit_Foreground should be called, by the background task,
+--      after communicating the results, after which the task may
+--      resume its work in the background.
 --
---  - The task can be cancelled, by a foreground task, using Cancel.
+--    - The task should check whether it is Cancelled using
+--      Is_Cancelled or Test_Cancelled.
+--
+--
+--  - The foreground task, which initiated the background task, should
+--    obtain a Cancellation_State object, from the Task_State object,
+--    using Get_Cancellation_State.
+--
+--    - The foreground task can cancel the background task, using
+--      Cancel.
 --
 package Task_States is
    pragma Assertion_Policy (Pre => Check);
@@ -107,42 +116,60 @@ package Task_States is
    procedure Continue (C : Continuation) is abstract;
 
 
-   -- Task State --
+   -- Task State Reference --
 
    --
-   -- Task_State
+   -- Task_State_Ref
    --
    --  References a shared task state object.
    --
    --  NOTE: Does not reference any Task_State object unless it is
    --  created by Create.
    --
-   type Task_State is new Controlled with private;
+   type Task_State_Ref is new Controlled with private;
 
    --
    -- Create
    --
-   --  Create a shared task state object and return a Task_State,
+   --  Create a shared task state object and return a Task_State_Ref,
    --  which references it.
    --
-   function Create return Task_State;
+   function Create return Task_State_Ref;
 
-
-   -- Memory Management --
-
-   procedure Finalize (State : in out Task_State);
-   procedure Adjust (State : in out Task_State);
+   procedure Finalize (State : in out Task_State_Ref);
+   procedure Adjust (State : in out Task_State_Ref);
 
    --
    -- Is_Empty
    --
-   --  Returns true if the Task_State does not point to any shared
+   --  Returns true if the Task_State_Ref does not point to any shared
    --  task state.
    --
-   function Is_Empty (State : Task_State) return Boolean;
+   function Is_Empty (State : Task_State_Ref) return Boolean;
 
 
-   -- Operations --
+   -- Background Task State --
+
+   --
+   -- Task_State
+   --
+   --  Provides the procedures for changing the state, of a shared
+   --  task state object, which should only be called by the
+   --  background task.
+   --
+   --  NOTE: Does not reference any Task_State object unless it is
+   --  obtained by Get_Background_State
+   --
+   type Background_State is new Task_State_Ref with private;
+
+
+   --
+   -- Get_Background_State
+   --
+   --  Obtains a reference to a shared task state, which can be used
+   --  by the background task.
+   --
+   function Get_Background_State (State : Task_State_Ref'Class) return Background_State;
 
    --
    -- Enter_Foreground
@@ -158,7 +185,7 @@ package Task_States is
    --  If the task has been cancelled prior to calling this procedure,
    --  a Task_Cancelled exception is raised.
    --
-   procedure Enter_Foreground (State : in Task_State)
+   procedure Enter_Foreground (State : in Background_State)
    with Pre => not State.Is_Empty;
 
    --
@@ -176,7 +203,7 @@ package Task_States is
    --  procedure being called, the task is cancelled and a
    --  Task_Cancelled exception is raised.
    --
-   procedure Exit_Foreground (State : in Task_State)
+   procedure Exit_Foreground (State : in Background_State)
    with Pre => not State.Is_Empty;
 
 
@@ -186,7 +213,7 @@ package Task_States is
    --  Check whether the task was cancelled. If the task was cancelled
    --  a Task_Cancelled exception is raised.
    --
-   procedure Test_Cancelled (State : in Task_State)
+   procedure Test_Cancelled (State : in Background_State)
    with Pre => not State.Is_Empty;
 
    --
@@ -194,9 +221,30 @@ package Task_States is
    --
    --  Returns true if the task was cancelled.
    --
-   function Is_Cancelled (State : in Task_State) return Boolean
+   function Is_Cancelled (State : in Background_State) return Boolean
    with Pre => not State.Is_Empty;
 
+
+   -- Cancellation State --
+
+   --
+   -- Cancellation_State
+   --
+   --  Provides the procedures for cancelling a background task, using
+   --  a shared task state object, from a foreground task.
+   --
+   --  NOTE: Does not reference any Task_State object unless it is
+   --  obtained by Get_Cancellation_State
+   --
+   type Cancellation_State is new Task_State_Ref with private;
+
+   --
+   -- Get_Cancellation_State
+   --
+   --  Obtains a reference to a shared task state, which can be used
+   --  by the foreground task to cancel a background task.
+   --
+   function Get_Cancellation_State (State : Task_State_Ref'Class) return Cancellation_State;
 
    --
    -- Cancel
@@ -213,7 +261,7 @@ package Task_States is
    --  deferred. Use the other Cancel procedure which takes a
    --  Continuation procedure as an argument.
    --
-   procedure Cancel (State : in Task_State)
+   procedure Cancel (State : in Cancellation_State)
    with Pre => not State.Is_Empty;
 
    --
@@ -229,7 +277,7 @@ package Task_States is
    --  When the task is cancelled, either immediately or deferred, the
    --  Continue procedure of the Continuation 'C' is called.
    --
-   procedure Cancel (State : in Task_State; C : in Continuation'Class)
+   procedure Cancel (State : in Cancellation_State; C : in Continuation'Class)
    with Pre => not State.Is_Empty;
 
 private
@@ -248,7 +296,7 @@ private
    type Refcount is range 0 .. 2**32;
 
    --
-   -- Task_State_Object
+   -- Task_State
    --
    --  Shared task state object.
    --
@@ -273,7 +321,7 @@ private
    --  cleaner if the protected task state object does its own
    --  reference counting.
    --
-   protected type Task_State_Object is
+   protected type Task_State is
 
       -- Reference Counting --
 
@@ -318,17 +366,21 @@ private
       After_Cancel   : Continuation_Holders.Holder; -- Continuation procedure to call after cancellation
       Num_References : Refcount := 1;               -- Reference Count
 
-   end Task_State_Object;
+   end Task_State;
 
-   type Task_State_Object_Ptr is access Task_State_Object;
+   type Task_State_Ptr is access Task_State;
 
-   procedure Free is new Ada.Unchecked_Deallocation (Task_State_Object, Task_State_Object_Ptr);
+   procedure Free is new Ada.Unchecked_Deallocation (Task_State, Task_State_Ptr);
 
 
-   -- Task State Reference Object --
+   -- Task State References --
 
-   type Task_State is new Controlled with record
-      Object : Task_State_Object_Ptr;
+   type Task_State_Ref is new Controlled with record
+      Object : Task_State_Ptr;
    end record;
+
+   type Background_State is new Task_State_Ref with null record;
+
+   type Cancellation_State is new Task_State_Ref with null record;
 
 end Task_States;
