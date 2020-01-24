@@ -19,89 +19,44 @@ with Directory_Types;
 with Task_States;
 with Task_Cleanup;
 
+with Background_Tasks;
+
 --
 -- Purpose:
 --
---  Provides a task for reading a directory.
+--  Provides a task for reading a directory in the background.
 --
+generic
+   --
+   -- Type of the user data object passed to each callback.
+   --
+   type User_Data is private;
+
+   --
+   -- Callback, which is called before reading the directory.
+   --
+   with procedure Begin_Callback (Data : in User_Data);
+
+   --
+   -- Callback, which is called when reading an entry.
+   --
+   with procedure Entry_Callback (Data : in User_Data; Dir_Entry : in Directory_Entries.Directory_Entry);
+
+   --
+   -- Callback, which is called after the task has finished reading
+   -- the directory.
+   --
+   -- The finish callback should call the Finish entry of the task,
+   -- from a different task than the one on which it is invoked, to
+   -- allow the task to terminate.
+   --
+   with procedure Finish_Callback (Data : in User_Data);
+
 package Read_Tasks is
 
    -- Indefinite Holder Packages --
 
-   package Tree_Holders is new Ada.Containers.Indefinite_Holders
-     (Directory_Trees.Directory_Tree'Class,
-      Directory_Trees."=");
-
-
-   -- Background Task Interface --
-
-   --
-   -- Background task interface type.
-   --
-   --  This provides one primitive operation, Finish, which should be
-   --  called, from a foreground task, to allow the background task to
-   --  terminate.
-   --
-   type Background_Task is task interface;
-   type Background_Task_Ptr is access all Background_Task'Class;
-
-   --
-   -- Finish
-   --
-   --  Informs the background task that it may terminate. Additionally
-   --  the Directory_Tree object, storing the entries read from the
-   --  directories, is moved into the holder object Tree.
-   --
-   procedure Finish (T : in Background_Task; Tree : in out Tree_Holders.Holder)
-     is abstract;
-
-
-   -- Operation Callback Interface --
-
-   --
-   -- Operation_Callback
-   --
-   --  Task Callback interface.
-   --
-   --  The interface provides three primitive operations which are
-   --  called:
-   --
-   --   - Prior to beginning the operation.
-   --   - When a new entry is read.
-   --   - After all entries are read.
-   --
-   type Operation_Callback is interface;
-
-   --
-   -- Begin_Operation
-   --
-   --  Called before the task has begun reading the directory.
-   --
-   procedure Begin_Operation (Callback : in out Operation_Callback)
-     is abstract;
-
-   --
-   -- New_Entry
-   --
-   --  Called when a new entry, Dir_Entry, is read from the directory.
-   --
-   procedure New_Entry (Callback : in out Operation_Callback;
-                        Dir_Entry : in Directory_Entries.Directory_Entry)
-     is abstract;
-
-   --
-   -- Finish_Operation
-   --
-   --  Called after all entries have been read.
-   --
-   --  This procedure should invoke the Finish entry of the background
-   --  task, from a different task, in order to obtain the full
-   --  directory tree and it to allow the task to terminate.
-   --
-   procedure Finish_Operation (Callback : in out Operation_Callback;
-                               Task_Ptr : in Background_Task_Ptr;
-                               Cancelled : in Boolean)
-     is abstract;
+   package Tree_Holders renames Background_Tasks.Tree_Holders;
 
 
    -- Read Task --
@@ -111,20 +66,17 @@ package Read_Tasks is
    --
    --  Task for reading a directory.
    --
-   task type Read_Task is new Background_Task and Task_Cleanup.Tracked_Task with
+   task type Read_Task is new Background_Tasks.Background_Task and
+     Task_Cleanup.Tracked_Task with
 
       --
       -- Init
       --
       --  Initialize the task with a Task_State object, for
-      --  cancellation, and a callback object.
-      --
-      --  Additionally the pointer to the task should be passed in
-      --  order for it to be passed to the callback.
+      --  cancellation, and a callback user data object.
       --
       entry Init (Task_State : Task_States.Task_State_Ref;
-                  Task_Ptr : Background_Task_Ptr;
-                  Callback : Operation_Callback'Class);
+                  Data : User_Data);
 
       --
       -- Read

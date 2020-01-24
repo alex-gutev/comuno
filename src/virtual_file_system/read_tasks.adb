@@ -22,17 +22,14 @@ package body Read_Tasks is
    package Type_Holders is new Ada.Containers.Indefinite_Holders
      (Directory_Types.Directory_Type'Class);
 
-   package Callback_Holders is new Ada.Containers.Indefinite_Holders
-     (Operation_Callback'Class);
-
 
    -- Utility Functions --
 
    procedure Call_Begin (State : in out Task_States.Background_State;
-                         Callback : in out Operation_Callback'Class) is
+                         Data : in User_Data) is
    begin
       State.Enter_Foreground;
-      Callback.Begin_Operation;
+      Begin_Callback(Data);
       State.Exit_Foreground;
    end Call_Begin;
 
@@ -56,28 +53,24 @@ package body Read_Tasks is
 
    task body Read_Task is
       State : Task_States.Background_State;
-      Self_Ptr : Background_Task_Ptr;
+      Cb_Data : User_Data;
 
       Dir_Type : Type_Holders.Holder;
-      Op_Callback : Callback_Holders.Holder;
-
       Tree : Tree_Holders.Holder;
 
       procedure Call_New_Entry (Ent : in Directory_Entries.Directory_Entry) is
       begin
          State.Enter_Foreground;
-         Op_Callback.Reference.New_Entry(Ent);
+         Entry_Callback(Cb_Data, Ent);
          State.Exit_Foreground;
       end Call_New_Entry;
 
    begin
       accept Init (Task_State : Task_States.Task_State_Ref;
-                   Task_Ptr : Background_Task_Ptr;
-                   Callback : Operation_Callback'Class) do
+                   Data : User_Data) do
 
          State := Task_State.Get_Background_State;
-         Self_Ptr := Task_Ptr;
-         Op_Callback.Replace_Element(Callback);
+         Cb_Data := Data;
       end Init;
 
       declare
@@ -99,7 +92,7 @@ package body Read_Tasks is
          end select;
       end;
 
-      Call_Begin(State, Op_Callback.Reference);
+      Call_Begin(State, Cb_Data);
 
       Tree.Replace_Element(Dir_Type.Reference.Make_Tree);
 
@@ -120,7 +113,7 @@ package body Read_Tasks is
 
       State.Enter_Foreground;
 
-      Op_Callback.Reference.Finish_Operation(Self_Ptr, False);
+      Finish_Callback(Cb_Data);
 
       accept Finish (Directory_Tree : in out Tree_Holders.Holder) do
          Directory_Tree.Move(Tree);
