@@ -12,6 +12,8 @@
 --  the Free Software Foundation, 51 Franklin Street, Suite 500, Boston,
 --  MA 02110-1335, USA.
 
+with "GNATCOLL";
+with "gtkada";
 
 project Comuno is
    for Languages use ("Ada", "C");
