@@ -113,7 +113,7 @@ package body Read_Tasks is
 
       State.Enter_Foreground;
 
-      Finish_Callback(Cb_Data);
+      Finish_Callback(Cb_Data, Dir_Type.Reference);
 
       accept Finish (Directory_Tree : in out Tree_Holders.Holder) do
          Directory_Tree.Move(Tree);

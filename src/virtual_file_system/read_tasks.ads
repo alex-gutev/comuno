@@ -50,7 +50,8 @@ generic
    -- from a different task than the one on which it is invoked, to
    -- allow the task to terminate.
    --
-   with procedure Finish_Callback (Data : in User_Data);
+   with procedure Finish_Callback (Data           : in User_Data;
+                                   Directory_Type : in Directory_Types.Directory_Type'Class);
 
 package Read_Tasks is
 
