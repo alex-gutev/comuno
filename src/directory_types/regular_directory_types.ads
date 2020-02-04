@@ -10,7 +10,7 @@
 pragma License (GPL);
 
 with Paths;
-with Listing;
+with Listers;
 with Directory_Entries;
 with Directory_Trees;
 with Directory_Types;
@@ -29,7 +29,7 @@ package Regular_Directory_Types is
    function Create (Path : Paths.Path) return Directory_Type;
 
 
-   function Make_Lister (This : in Directory_Type) return Listing.Lister'Class;
+   function Make_Lister (This : in Directory_Type) return Listers.Lister'Class;
 
    function Make_Tree (This : in Directory_Type) return Directory_Trees.Directory_Tree'Class;
 

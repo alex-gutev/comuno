@@ -32,7 +32,7 @@ with Paths;
 --  - Call Entry_Attributes to obtain the attributes of the last entry
 --    that was read.
 --
-package Listing is
+package Listers is
    --
    -- Abstract type which serves as a handle to a directory.
    --
@@ -86,10 +86,12 @@ package Listing is
    -- The following exceptions should be raised for errors occuring
    -- while listing the contents of a directory.
 
-   Open_Dir_Error       : exception;    -- Error opening directory for
-                                        -- reading.
+   Open_Directory_Error : exception; -- Error opening directory for
+                                     -- reading.
 
-   Get_Attributes_Error : exception;    -- Error obtaining file
-                                        -- attributes
+   Read_Entry_Error     : exception; -- Error reading entry
 
-end Listing;
+   Get_Attributes_Error : exception; -- Error obtaining file
+                                     -- attributes
+
+end Listers;

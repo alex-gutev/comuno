@@ -17,7 +17,7 @@ package body Regular_Directory_Types is
    function Create (Path : Paths.Path) return Directory_Type is
      (Directory_Types.Directory_Type with Dir_Path => Path);
 
-   function Make_Lister (This : in Directory_Type) return Listing.Lister'Class is
+   function Make_Lister (This : in Directory_Type) return Listers.Lister'Class is
    begin
       return Lister : Directory_Listers.Directory_Lister do
          Lister.Open(This.Dir_Path.To_String);

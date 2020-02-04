@@ -41,7 +41,7 @@ package body Directory_Listers is
       Handle := Open_Dir(C.To_C(Path));
 
       if Handle = C.Strings.Null_Ptr then
-         raise Open_Dir_Error;
+         raise Open_Directory_Error;
       end if;
 
       This.Handle := Handle;

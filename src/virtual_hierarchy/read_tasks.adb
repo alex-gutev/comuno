@@ -10,7 +10,7 @@
 pragma License (GPL);
 
 with File_System;
-with Listing;
+with Listers;
 
 with Ada.Exceptions;
 
@@ -33,9 +33,9 @@ package body Read_Tasks is
       State.Exit_Foreground;
    end Call_Begin;
 
-   procedure Add_Entry (Lister : in out Listing.Lister'Class;
+   procedure Add_Entry (Lister : in out Listers.Lister'Class;
                         Tree : in out Directory_Trees.Directory_Tree'Class;
-                        Dir_Entry : in Listing.Dir_Entry) is
+                        Dir_Entry : in Listers.Dir_Entry) is
 
       Attributes : File_System.Attributes;
 
@@ -44,7 +44,7 @@ package body Read_Tasks is
       Tree.Add_Entry(Directory_Entries.Make_Entry(Dir_Entry, Attributes));
 
    exception
-      when Listing.Get_Attributes_Error => null;
+      when Listers.Get_Attributes_Error => null;
 
    end Add_Entry;
 
@@ -98,8 +98,8 @@ package body Read_Tasks is
 
 
       declare
-         Lister : Listing.Lister'Class := Dir_Type.Reference.Make_Lister;
-         Ent : Listing.Dir_Entry;
+         Lister : Listers.Lister'Class := Dir_Type.Reference.Make_Lister;
+         Ent    : Listers.Dir_Entry;
 
       begin
 
