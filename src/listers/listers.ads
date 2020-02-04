@@ -86,7 +86,7 @@ package Listers is
    -- The following exceptions should be raised for errors occuring
    -- while listing the contents of a directory.
 
-   Open_Dir_Error       : exception; -- Error opening directory for
+   Open_Directory_Error : exception; -- Error opening directory for
                                      -- reading.
 
    Get_Attributes_Error : exception; -- Error obtaining file

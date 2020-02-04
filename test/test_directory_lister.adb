@@ -112,7 +112,7 @@ package body Test_Directory_Lister is
          Assert(False, "Exception not raised when attempting to open nonexistent directory");
 
       exception
-         when Listers.Open_Dir_Error => null;
+         when Listers.Open_Directory_Error => null;
       end;
 
    end Test_Non_Existent_Dir;
@@ -135,7 +135,7 @@ package body Test_Directory_Lister is
          Assert(False, "Exception not raised when attempting to list a regular file");
 
       exception
-         when Listers.Open_Dir_Error => null;
+         when Listers.Open_Directory_Error => null;
       end;
 
    end Test_List_File;
