@@ -18,7 +18,7 @@ with System.Assertions;
 with Test_Util;
 
 with File_System;
-with Listing;
+with Listers;
 with Directory_Listers;
 
 package body Test_Directory_Lister is
@@ -48,14 +48,14 @@ package body Test_Directory_Lister is
 
       Lister : Directory_Listers.Directory_Lister;
 
-      Entries : array (Positive range <>) of Listing.Dir_Entry :=
+      Entries : array (Positive range <>) of Listers.Dir_Entry :=
         ((Name => U("a-folder"), Kind => File_System.Directory),
          (Name => U("a-file.txt"), Kind => File_System.Regular),
          (Name => U("a-script.sh"), Kind => File_System.Regular));
 
       Visited : array (Positive range Entries'Range) of Boolean := (others => False);
 
-      function Entry_Key (Ent : Listing.Dir_Entry) return Positive is
+      function Entry_Key (Ent : Listers.Dir_Entry) return Positive is
       begin
          for Index in Entries'Range loop
             if Ent.Name = Entries(Index).Name then
@@ -71,7 +71,7 @@ package body Test_Directory_Lister is
       Lister.Open("test/inputs/directory_lister/test1");
 
       declare
-         Ent   : Listing.Dir_Entry;
+         Ent   : Listers.Dir_Entry;
          Index : Positive;
 
       begin
@@ -112,7 +112,7 @@ package body Test_Directory_Lister is
          Assert(False, "Exception not raised when attempting to open nonexistent directory");
 
       exception
-         when Listing.Open_Dir_Error => null;
+         when Listers.Open_Dir_Error => null;
       end;
 
    end Test_Non_Existent_Dir;
@@ -135,7 +135,7 @@ package body Test_Directory_Lister is
          Assert(False, "Exception not raised when attempting to list a regular file");
 
       exception
-         when Listing.Open_Dir_Error => null;
+         when Listers.Open_Dir_Error => null;
       end;
 
    end Test_List_File;

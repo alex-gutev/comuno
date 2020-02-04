@@ -17,7 +17,7 @@ package body Directory_Entries is
 
    -- Constructors --
 
-   function Make_Entry (Ent : Listing.Dir_Entry; Attributes : File_System.Attributes)
+   function Make_Entry (Ent : Listers.Dir_Entry; Attributes : File_System.Attributes)
                        return Directory_Entry is
       Ent_Path : Paths.Path := Paths.Make_Path(Ent.Name);
 

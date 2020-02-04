@@ -10,7 +10,7 @@
 pragma License (GPL);
 
 with Paths;
-with Listing;
+with Listers;
 with Directory_Trees;
 with Directory_Entries;
 
@@ -40,7 +40,7 @@ package Directory_Types is
    --
    --  Create a lister for the directory.
    --
-   function Make_Lister (Dir : in Directory_Type) return Listing.Lister'Class
+   function Make_Lister (Dir : in Directory_Type) return Listers.Lister'Class
      is abstract;
 
    --

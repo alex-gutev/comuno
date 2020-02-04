@@ -10,7 +10,7 @@
 pragma License (GPL);
 
 with File_System;
-with Listing;
+with Listers;
 
 with Paths;
 with Paths.Canonical_Paths;
@@ -33,10 +33,10 @@ package Directory_Entries is
    --
    -- Make_Entry
    --
-   --  Create a Directory_Entry from a Listing.Dir_Entry object,
+   --  Create a Directory_Entry from a Listers.Dir_Entry object,
    --  obtained from listing a directory, with given Attributes.
    --
-   function Make_Entry (Ent : Listing.Dir_Entry; Attributes : File_System.Attributes)
+   function Make_Entry (Ent : Listers.Dir_Entry; Attributes : File_System.Attributes)
                        return Directory_Entry;
 
    --
