@@ -22,7 +22,13 @@ with Paths.Canonical_Paths;
 --  metadata of an entry read from a directory.
 --
 package Directory_Entries is
+
    type Directory_Entry is private;
+
+   --
+   -- Entry representing the parent directory.
+   --
+   Parent_Entry : constant Directory_Entry;
 
    --
    -- Make_Entry
@@ -92,5 +98,11 @@ private
       Attributes     : File_System.Attributes;
       Kind           : File_System.File_Type;
    end record;
+
+   Parent_Entry : constant Directory_Entry :=
+     (Original_Path => Paths.Make_Path(".."),
+      Canonical_Path => Paths.Canonical_Paths.Canonicalize(Paths.Make_Path("..")),
+      Kind => File_System.Directory,
+      Attributes => (Kind => File_System.Directory, others => <>));
 
 end Directory_Entries;
