@@ -60,9 +60,18 @@ package body Directory_Listers is
    use type C.Int;
    function Read_Entry (This : in out Directory_Lister; Ent : out Dir_Entry) return Boolean is
       C_Ent : C_Types.Dir_Entry;
+      Ret : C.Int;
 
    begin
-      while Get_Entry(This.Handle, C_Ent) /= 0 loop
+      loop
+         Ret := Get_Entry(This.Handle, C_Ent);
+
+         exit when Ret = 0;
+
+         if Ret = -1 then
+            raise Read_Entry_Error;
+         end if;
+
          declare
             Name : String := C.Strings.Value(C_Ent.Name);
 

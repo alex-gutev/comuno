@@ -20,6 +20,7 @@
 
 #include <dirent.h>
 #include <sys/stat.h>
+#include <errno.h>
 
 #include "types.h"
 
@@ -46,6 +47,8 @@ void close_dir(void *handle) {
 
 int get_entry(void *handle, struct dir_entry * out_ent) {
 	DIR *dp = handle;
+
+	errno = 0;
 	struct dirent *ent = readdir(dp);
 
 	if (ent) {
@@ -55,7 +58,7 @@ int get_entry(void *handle, struct dir_entry * out_ent) {
 		return 1;
 	}
 	else {
-		return 0;
+		return errno ? -1 : 0;
 	}
 }
 
