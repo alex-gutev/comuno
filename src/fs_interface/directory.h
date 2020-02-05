@@ -48,8 +48,9 @@ void close_dir(void *handle);
  * @param ent Pointer to dir_entry struct which is populated with the
  *   metadata of the next entry.
  *
- * @return 1 if the metadata of the next entry was actually read, 0 if
- *   there are no more entries in the directory.
+ * @return 1 if the metadata of the next entry was actually read
+ *         0 if there are no more entries in the directory
+ *        -1 if there was an error reading the directory
  */
 int get_entry(void *handle, struct dir_entry *ent);
 
