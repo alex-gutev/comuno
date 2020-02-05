@@ -89,6 +89,8 @@ package Listers is
    Open_Directory_Error : exception; -- Error opening directory for
                                      -- reading.
 
+   Read_Entry_Error     : exception; -- Error reading entry
+
    Get_Attributes_Error : exception; -- Error obtaining file
                                      -- attributes
 
