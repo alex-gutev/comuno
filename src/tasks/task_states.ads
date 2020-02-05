@@ -113,7 +113,10 @@ package Task_States is
    --
    --  Invokes the continuation procedure.
    --
-   procedure Continue (C : Continuation) is abstract;
+   --  Cancelled: If True the operation was cancelled, otherwise the
+   --  operation completed succesfully.
+   --
+   procedure Continue (C : Continuation; Cancelled : Boolean) is abstract;
 
 
    -- Task State Reference --
@@ -280,6 +283,20 @@ package Task_States is
    procedure Cancel (State : in Cancellation_State; C : in Continuation'Class)
    with Pre => not State.Is_Empty;
 
+   --
+   -- Finish
+   --
+   --  Set the task's state to finished.
+   --
+   --  This calls the continue procedure, if any, with cancelled equal
+   --  to false.
+   --
+   --  This procedure should be called by the foreground task once it
+   --  knows that the task will no longer be communicating with it.
+   --
+   procedure Finish (State : in Cancellation_State)
+   with Pre => not State.Is_Empty;
+
 private
 
    package Continuation_Holders is new Ada.Containers.Indefinite_Holders
@@ -359,10 +376,15 @@ private
       procedure Cancel;
       procedure Cancel (C : Continuation'Class);
 
+      -- Finalization --
+
+      procedure Finish;
+
    private
 
       Foreground     : Boolean  := False;           -- Flag: True if in the 'Foreground' state
       Cancelled      : Boolean  := False;           -- Flag: True if marked for cancellation
+      Finished       : Boolean  := False;           -- Flag: True if task has finished
       After_Cancel   : Continuation_Holders.Holder; -- Continuation procedure to call after cancellation
       Num_References : Refcount := 1;               -- Reference Count
 
