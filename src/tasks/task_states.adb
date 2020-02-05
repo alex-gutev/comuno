@@ -52,7 +52,7 @@ package body Task_States is
          if Is_Cancelled then
 
             if not After_Cancel.Is_Empty then
-               After_Cancel.Element.Continue;
+               After_Cancel.Element.Continue(True);
                After_Cancel.Clear;
             end if;
 
@@ -76,13 +76,26 @@ package body Task_States is
          Cancel;
 
          if not Foreground then
-            C.Continue;
+            C.Continue(not Finished);
 
          else
             After_Cancel := Continuation_Holders.To_Holder(C);
 
          end if;
       end Cancel;
+
+
+      -- Finalization
+
+      procedure Finish is
+      begin
+         if not After_Cancel.Is_Empty then
+            After_Cancel.Element.Continue(True);
+
+            Foreground := False;
+            Finished   := True;
+         end if;
+      end Finish;
 
    end Task_State;
 
@@ -174,5 +187,11 @@ package body Task_States is
    begin
       State.Object.Cancel(C);
    end Cancel;
+
+   procedure Finish (State : Cancellation_State) is
+   begin
+      State.Object.Finish;
+   end Finish;
+
 
 end Task_States;
