@@ -10,6 +10,7 @@
 pragma License (GPL);
 
 with Ada.Finalization;
+with Ada.Exceptions;
 
 with Paths;
 with Directory_Entries;
@@ -67,7 +68,7 @@ package Virtual_Hierarchies is
    --  for entries which are in the current subdirectory of the
    --  virtual directory hierarchy.
    --
-   procedure New_Entry (This : in Operation_Callback;
+   procedure New_Entry (This      : in Operation_Callback;
                         Dir_Entry : in Directory_Entries.Directory_entry)
      is abstract;
 
@@ -77,6 +78,16 @@ package Virtual_Hierarchies is
    --  Called after the operation has completed successfully.
    --
    procedure Finish_Operation (This : in Operation_Callback)
+     is abstract;
+
+   --
+   -- Operation_Error
+   --
+   --  Called when an error occurs during a background operation. This
+   --  includes cancellation.
+   --
+   procedure Operation_Error (This  : in Operation_Callback;
+                              Error : in Ada.Exceptions.Exception_Occurrence)
      is abstract;
 
 

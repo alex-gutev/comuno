@@ -10,6 +10,7 @@
 pragma License (GPL);
 
 with Ada.Containers.Indefinite_Holders;
+with Ada.Exceptions;
 
 with Paths;
 with Directory_Entries;
@@ -46,12 +47,17 @@ generic
    -- Callback, which is called after the task has finished reading
    -- the directory.
    --
-   -- The finish callback should call the Finish entry of the task,
-   -- from a different task than the one on which it is invoked, to
-   -- allow the task to terminate.
+   -- The callback should call the Output entry of the task, from a
+   -- different task than the one on which it is invoked, to allow the
+   -- task to terminate.
    --
    with procedure Finish_Callback (Data           : in User_Data;
                                    Directory_Type : in Directory_Types.Directory_Type'Class);
+
+   --
+   -- Callback, which is called when an error occurs.
+   --
+   with procedure Error_Callback (Data : in User_Data; Error : in Ada.Exceptions.Exception_Occurrence);
 
 package Read_Tasks is
 
@@ -94,13 +100,12 @@ package Read_Tasks is
       entry Read (Directory_Type : Directory_Types.Directory_Type'Class);
 
       --
-      -- Finish
+      -- Output
       --
-      --  Allow the task to terminate. The full Directory Tree object,
-      --  containing all the entries read, is moved into the Holder
-      --  object passed as an argument.
+      --  Sets Directory_Tree to the directory tree object into which
+      --  the entries were read.
       --
-      entry Finish (Directory_Tree : in out Tree_Holders.Holder);
+      entry Output (Directory_Tree : in out Tree_Holders.Holder);
 
    end Read_Task;
 
