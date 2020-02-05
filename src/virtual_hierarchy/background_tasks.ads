@@ -34,14 +34,12 @@ package Background_Tasks is
    type Background_Task_Ptr is access all Background_Task'Class;
 
    --
-   -- Finish
+   -- Output
    --
    --  When called the Directory_Tree, into which the entries were
    --  read, should be moved into Tree.
    --
-   --  The task should terminate after accepting this entry.
-   --
-   procedure Finish (T : in out Background_Task; Tree : in out Tree_Holders.Holder)
+   procedure Output (T : in out Background_Task; Tree : in out Tree_Holders.Holder)
      is abstract;
 
 end Background_Tasks;

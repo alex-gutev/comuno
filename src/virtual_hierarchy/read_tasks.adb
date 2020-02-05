@@ -96,32 +96,44 @@ package body Read_Tasks is
 
       Tree.Replace_Element(Dir_Type.Reference.Make_Tree);
 
-
-      declare
-         Lister : Listers.Lister'Class := Dir_Type.Reference.Make_Lister;
-         Ent    : Listers.Dir_Entry;
-
+   Read_Directory:
       begin
+         declare
+            Lister : Listers.Lister'Class := Dir_Type.Reference.Make_Lister;
+            Ent    : Listers.Dir_Entry;
 
-         while Lister.Read_Entry(Ent) loop
-            Add_Entry(Lister, Tree.Reference, Ent);
-         end loop;
+         begin
+            while Lister.Read_Entry(Ent) loop
+               Add_Entry(Lister, Tree.Reference, Ent);
+            end loop;
+         end;
 
-      end;
+         Tree.Reference.Iterate(Call_New_Entry'Access);
 
-      Tree.Reference.Iterate(Call_New_Entry'Access);
+         State.Enter_Foreground;
 
-      State.Enter_Foreground;
+         Finish_Callback(Cb_Data, Dir_Type.Reference);
 
-      Finish_Callback(Cb_Data, Dir_Type.Reference);
+         accept Output (Directory_Tree : in out Tree_Holders.Holder) do
+            Directory_Tree.Move(Tree);
+         end Output;
 
-      accept Finish (Directory_Tree : in out Tree_Holders.Holder) do
-         Directory_Tree.Move(Tree);
-      end Finish;
+      exception
+         when E : Listers.Open_Directory_Error |
+           Listers.Read_Entry_Error |
+           Listers.Get_Attributes_Error =>
 
-      State.Exit_Foreground;
+            State.Enter_Foreground;
+            Error_Callback(Cb_Data, E);
+
+      end Read_Directory;
+
+   exception
+      when E : Task_States.Task_Cancelled  =>
+         null;
 
    end Read_Task;
+
 
    function Create return Read_Task_Ptr is
       T : Read_Task_Ptr := new Read_Task;
