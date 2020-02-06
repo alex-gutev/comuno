@@ -72,6 +72,11 @@ package File_Model_Columns is
    package Entry_Pointers is new Gnatcoll.Refcount.Shared_Pointers
      (Directory_Entries.Directory_Entry);
 
+   subtype Entry_Ref is Entry_Pointers.Reference_Type;
+
+
+   -- List Store Model Columns --
+
    --
    -- Column_Types
    --
@@ -85,8 +90,8 @@ package File_Model_Columns is
    --  Set the columns values of a Row inside Model, to the values of
    --  the properites of the Directory_Entry Dir_Entry.
    --
-   procedure Set_Values (Model : in Gtk.List_Store.Gtk_List_Store;
-                         Row : in Gtk.Tree_Model.Gtk_Tree_Iter;
+   procedure Set_Values (Model     : in Gtk.List_Store.Gtk_List_Store;
+                         Row       : in Gtk.Tree_Model.Gtk_Tree_Iter;
                          Dir_Entry : in Directory_Entries.Directory_Entry);
 
    --
@@ -95,8 +100,25 @@ package File_Model_Columns is
    --  Retrieve the Directory_Entry displayed in Row of Model.
    --
    function Get_Entry (Model : in Gtk.List_Store.Gtk_List_Store;
-                       Row : in Gtk.Tree_Model.Gtk_Tree_Iter)
-                      return Entry_Pointers.Reference_Type;
+                       Row   : in Gtk.Tree_Model.Gtk_Tree_Iter)
+                      return Entry_Ref;
+
+
+   -- Marked State --
+
+   --
+   -- Is_Marked
+   --
+   --  Returns true if the row in the model is marked.
+   --
+   function Is_Marked (Model : in Tree_Model; Row : in Row_Iter) return Boolean;
+
+   --
+   -- Set_Marked
+   --
+   --  Set the marked state of Row in Model to Marked.
+   --
+   procedure Set_Marked (Model : in Tree_Model; Row : in Row_Iter; Marked : in Boolean);
 
 private
 
