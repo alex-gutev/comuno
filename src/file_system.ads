@@ -18,8 +18,17 @@ with Ada.Strings.Unbounded;
 --
 package File_System is
    type File_Type is
-     (Unknown, Regular, Directory, Link,
-      FIFO, Character_Device, Block_Device, Socket, Whiteout);
+     (Unknown,
+      Regular,
+      Directory,
+      Link,
+      FIFO,
+      Character_Device,
+      Block_Device,
+      Socket,
+      Whiteout,
+      Parent -- Parent Directory Pseudo Entry Type
+     );
 
    --
    -- Base type representing file attribute values.

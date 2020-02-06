@@ -102,7 +102,7 @@ private
    Parent_Entry : constant Directory_Entry :=
      (Original_Path  => Paths.Make_Path(Paths.Parent_Component),
       Canonical_Path => Paths.Canonical_Paths.Canonicalize(Paths.Make_Path(Paths.Parent_Component)),
-      Kind           => File_System.Directory,
+      Kind           => File_System.Parent,
       Attributes     => (Kind => File_System.Directory, others => <>));
 
 end Directory_Entries;
