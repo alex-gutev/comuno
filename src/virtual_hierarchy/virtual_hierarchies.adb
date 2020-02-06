@@ -12,6 +12,8 @@ pragma License (GPL);
 with Read_Tasks;
 with Main_Task;
 
+with Exception_Holders;
+
 package body Virtual_Hierarchies is
 
    -- Holder Packages --
@@ -55,11 +57,14 @@ package body Virtual_Hierarchies is
    --  task.
    --
    type Read_Task_Data is record
-      Data     : Data_Weak_Ptr;
-      Dir_Type : Type_Holders.Holder;
+      Data       : Data_Weak_Ptr;
+      Dir_Type   : Type_Holders.Holder;
 
-      Task_Ptr : Background_Tasks.Background_Task_Ptr;
-      Callback : Callback_Holders.Holder;
+      Task_Ptr   : Background_Tasks.Background_Task_Ptr;
+      Task_State : Task_States.Cancellation_State;
+
+      Callback   : Callback_Holders.Holder;
+      Error      : Exception_Holders.Holder;
    end record;
 
 
@@ -69,6 +74,8 @@ package body Virtual_Hierarchies is
 
    procedure Finish_Read (Data : in Read_Task_Data; Dir_Type : in Directory_Types.Directory_Type'Class);
 
+   procedure Read_Error (Data : in Read_Task_Data; Error : in Ada.Exceptions.Exception_Occurrence);
+
 
    -- Read_Tasks package Instantiation --
 
@@ -76,7 +83,8 @@ package body Virtual_Hierarchies is
      (User_Data       => Read_Task_Data,
       Begin_Callback  => Begin_Read,
       Entry_Callback  => Read_Entry,
-      Finish_Callback => Finish_Read);
+      Finish_Callback => Finish_Read,
+      Error_Callback  => Read_Error);
 
    --
    -- Read_Task_Continuation
@@ -91,7 +99,7 @@ package body Virtual_Hierarchies is
       Path     : Paths.Path;                 -- Path to directory read
    end record;
 
-   overriding procedure Continue (C : in Read_Task_Continuation);
+   overriding procedure Continue (C : in Read_Task_Continuation; Cancelled : Boolean);
 
 
    -- Reading Directory Hierarchy --
@@ -114,21 +122,22 @@ package body Virtual_Hierarchies is
 
       else
          Data.Task_State := State.Get_Cancellation_State;
-         Continuation.Continue;
+         Continuation.Continue(False);
 
       end if;
 
    end Read;
 
-   procedure Continue (C : in Read_Task_Continuation) is
+   procedure Continue (C : in Read_Task_Continuation; Cancelled : Boolean) is
       T : Read_Task.Read_Task_Ptr := Read_Task.Create;
 
    begin
       T.Init(C.State,
-             (Data     => C.Data,
-              Callback => C.Callback,
-              Task_Ptr => Background_Tasks.Background_Task_Ptr(T),
-              others   => <>));
+             (Data       => C.Data,
+              Callback   => C.Callback,
+              Task_Ptr   => Background_Tasks.Background_Task_Ptr(T),
+              Task_State => C.State.Get_Cancellation_State,
+              others     => <>));
 
       T.Read(C.Path);
    end Continue;
@@ -162,8 +171,10 @@ package body Virtual_Hierarchies is
             Ref : Data_Ref := Ptr.Get;
 
          begin
-            Data.Task_Ptr.Finish(Ref.Current_Tree);
+            Data.Task_Ptr.Output(Ref.Current_Tree);
             Ref.Directory_Type := Data.Dir_Type;
+
+            Data.Task_State.Finish;
 
             Data.Callback.Constant_Reference.Finish_Operation;
          end;
@@ -178,5 +189,34 @@ package body Virtual_Hierarchies is
       New_Data.Dir_Type.Replace_Element(Dir_Type);
       Finish_Main.Dispatch(Finish_Read_On_Main'Access, New_Data);
    end Finish_Read;
+
+
+   -- Handling Errors while Reading
+
+   procedure Read_Error_On_Main (Data : in Read_Task_Data) is
+      Ptr : Data_Ptr;
+
+   begin
+      Ptr.Set(Data.Data);
+
+      if not Ptr.Is_Null then
+         declare
+            Ref : Data_Ref := Ptr.Get;
+
+         begin
+            Data.Task_State.Finish;
+            Data.Callback.Constant_Reference.Operation_Error(Data.Error.Get);
+         end;
+      end if;
+
+   end Read_Error_On_Main;
+
+   procedure Read_Error (Data : in Read_Task_Data; Error : in Ada.Exceptions.Exception_Occurrence) is
+      New_Data : Read_Task_Data := Data;
+
+   begin
+      New_Data.Error.Set(Error);
+      Finish_Main.Dispatch(Read_Error_On_Main'Access, New_Data);
+   end Read_Error;
 
 end Virtual_Hierarchies;
