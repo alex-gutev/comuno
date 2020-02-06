@@ -9,6 +9,8 @@
 
 pragma License (GPL);
 
+with Ada.Finalization;
+
 with Gnatcoll.Refcount;
 
 with Glib;
@@ -27,6 +29,43 @@ with Directory_Entries;
 --  columns.
 --
 package File_Model_Columns is
+
+   subtype Tree_Model is Gtk.List_Store.Gtk_List_Store;
+   subtype List_Store is Gtk.List_Store.Gtk_List_Store;
+   subtype Row_Iter is Gtk.Tree_Model.Gtk_Tree_Iter;
+
+
+   -- Reference Counting --
+
+   --
+   -- Model_Ref
+   --
+   --  Reference to a Gtk_List_Store which automatically increments
+   --  the Reference count (by Ref) when copied and decrements the
+   --  reference count (by Unref) when deallocated.
+   --
+   type Model_Ref is new Ada.Finalization.Controlled with private;
+
+   overriding procedure Adjust (Ref : in out Model_Ref);
+   overriding procedure Finalize (Ref : in out Model_Ref);
+
+   --
+   -- Set
+   --
+   --  Set the List_Store to which the reference refers to.
+   --
+   --  NOTE: The reference count of Model is not increment, as a
+   --  List_Store model is created with a reference count of 1.
+   --
+   procedure Set (Ref : in out Model_Ref; Model : in List_Store);
+
+   --
+   -- Get
+   --
+   --  Returns the access to the Gtk_List_Store model.
+   --
+   function Get (Ref : in Model_Ref) return List_Store;
+
    --
    -- Reference Counted Directory_Entry Pointer
    --
@@ -58,5 +97,11 @@ package File_Model_Columns is
    function Get_Entry (Model : in Gtk.List_Store.Gtk_List_Store;
                        Row : in Gtk.Tree_Model.Gtk_Tree_Iter)
                       return Entry_Pointers.Reference_Type;
+
+private
+
+   type Model_Ref is new Ada.Finalization.Controlled with record
+      Model : List_Store;
+   end record;
 
 end File_Model_Columns;

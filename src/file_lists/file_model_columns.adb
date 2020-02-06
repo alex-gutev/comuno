@@ -16,6 +16,8 @@ with Glib.Values;
 
 package body File_Model_Columns is
 
+   use type Gtk.List_Store.Gtk_List_Store;
+
    -- Packages --
 
    package Conversions is new System.Address_To_Access_Conversions
@@ -23,6 +25,31 @@ package body File_Model_Columns is
 
    procedure Free is new Ada.Unchecked_Deallocation
      (Entry_Pointers.Ref, Conversions.Object_Pointer);
+
+
+   -- List Store Model Reference --
+
+   procedure Adjust (Ref : in out Model_Ref) is
+   begin
+      if Ref.Model /= null then
+         Ref.Model.Ref;
+      end if;
+   end Adjust;
+
+   procedure Finalize (Ref : in out Model_Ref) is
+   begin
+      if Ref.Model /= null then
+         Ref.Model.Unref;
+      end if;
+   end Finalize;
+
+   procedure Set (Ref : in out Model_Ref; Model : in List_Store) is
+   begin
+      Ref := (Ada.Finalization.Controlled with Model => Model);
+   end Set;
+
+   function Get (Ref : in Model_Ref) return List_Store is
+     (Ref.Model);
 
 
    -- Column Types --
