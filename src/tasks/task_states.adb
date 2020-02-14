@@ -91,10 +91,10 @@ package body Task_States is
       begin
          if not After_Cancel.Is_Empty then
             After_Cancel.Element.Continue(True);
-
-            Foreground := False;
-            Finished   := True;
          end if;
+
+         Foreground := False;
+         Finished   := True;
       end Finish;
 
    end Task_State;
