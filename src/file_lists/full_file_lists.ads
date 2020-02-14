@@ -91,9 +91,9 @@ package Full_File_Lists is
    --               corresponding to the entry with the same name, as
    --               the previous directory
    --
-   procedure Change_Path (This        : in out File_List;
-                          Path        : in Paths.Path;
-                          Move_To_Old : in Boolean := False);
+   procedure Change_Path (This        : File_List;
+                          Path        : Paths.Path;
+                          Move_To_Old : Boolean := False);
 
    --
    -- Descend

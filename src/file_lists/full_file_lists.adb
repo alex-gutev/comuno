@@ -228,9 +228,9 @@ package body Full_File_Lists is
 
    -- Reading Directory --
 
-   procedure Change_Path (This : in out File_List;
-                          Path : in Paths.Path;
-                          Move_To_Old : in Boolean := False) is
+   procedure Change_Path (This        : File_List;
+                          Path        : Paths.Path;
+                          Move_To_Old : Boolean := False) is
 
       Data : Data_Ref := This.Data.Get;
 
