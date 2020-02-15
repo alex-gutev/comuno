@@ -86,7 +86,7 @@ package File_List_Views is
    --  'This', and the Tree Model, which is displayed in the view, is
    --  replaced with the Tree Model of 'List'.
    --
-   procedure Set_File_List (This : Controller; List : File_Lists.File_List'Class);
+   procedure Set_File_List (This : in out Controller; List : File_Lists.File_List'Class);
 
 
    --

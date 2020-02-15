@@ -385,7 +385,7 @@ package body File_List_Views is
       return Data.File_List.Element;
    end Get_File_List;
 
-   procedure Set_File_List (This : Controller; List : File_Lists.File_List'Class) is
+   procedure Set_File_List (This : in out Controller; List : File_Lists.File_List'Class) is
       Data  : Controller_Ref := This.Get;
       Empty : Controller;
 
@@ -393,6 +393,11 @@ package body File_List_Views is
       if not Data.File_List.Is_Empty then
          Data.File_List.Reference.Set_Listener(Empty);
       end if;
+
+      Data.File_List.Clear;
+
+      This.Change_Model(List.Get_List);
+      This.Select_Row(List.Selected_Row);
 
       Data.File_List.Replace_Element(List);
       Data.File_List.Reference.Set_Listener(This);
