@@ -9,6 +9,8 @@
 
 pragma License (GPL);
 
+with Glib;
+
 with Gtk.Frame;
 with Gtk.Gentry;
 with Gtk.Tree_View;
@@ -19,8 +21,8 @@ with Gtk.Tree_Model;
 with Gtk.List_Store;
 
 with File_Lists;
-with Full_File_Lists;
 
+private with Ada.Containers.Indefinite_Holders;
 private with Gnatcoll.Refcount;
 
 --
@@ -73,7 +75,7 @@ package File_List_Views is
    --  Returns the File_List object, the contents of which are
    --  displayed in the view.
    --
-   function Get_File_List (This : Controller) return Full_File_Lists.File_List;
+   function Get_File_List (This : Controller) return File_Lists.File_List'Class;
 
    --
    -- Set_File_List
@@ -84,7 +86,15 @@ package File_List_Views is
    --  'This', and the Tree Model, which is displayed in the view, is
    --  replaced with the Tree Model of 'List'.
    --
-   procedure Set_File_List (This : Controller; List : Full_File_Lists.File_List);
+   procedure Set_File_List (This : Controller; List : File_Lists.File_List'Class);
+
+
+   --
+   -- Get_Path
+   --
+   --  Return the path which is currently displayed in the path entry.
+   --
+   function Get_Path (This : Controller) return Glib.Utf8_String;
 
 
    -- File List Listener Interface Operations --
@@ -137,10 +147,10 @@ package File_List_Views is
       --  signal.
       --
       procedure Connect_Keypress
-        (This : Controller;
-         Cb : Return_Handlers.Marshallers.Marshaller;
+        (This      : Controller;
+         Cb        : Return_Handlers.Marshallers.Marshaller;
          User_Data : User_Type;
-         After : Boolean := False);
+         After     : Boolean := False);
 
       --
       -- Connect_Row_Activate
@@ -149,24 +159,40 @@ package File_List_Views is
       --  the view is clicked.
       --
       procedure Connect_Row_Activate
-        (This : Controller;
-         Cb : Void_Handlers.Marshallers.Marshaller;
+        (This      : Controller;
+         Cb        : Void_Handlers.Marshallers.Marshaller;
          User_Data : User_Type;
-         After : Boolean := False);
+         After     : Boolean := False);
+
+      --
+      -- Connect_Path_Activate
+      --
+      --  Connect a signal handler to the activate event of the path
+      --  entry.
+      --
+      procedure Connect_Path_Activate
+        (This      : Controller;
+         Cb        : Void_Handlers.Marshallers.Marshaller;
+         User_Data : User_Type;
+         After     : Boolean := False);
 
    end Callbacks;
 
 private
 
+   package File_List_Holders is new Ada.Containers.Indefinite_Holders
+     (File_Lists.File_List'Class,
+      File_Lists."=");
+
    type Controller_Record is record
-      View : File_List_View;
+      View          : File_List_View;
 
       Path_Entry    : Gtk.Gentry.Gtk_Entry;
       List_View     : Gtk.Tree_View.Gtk_Tree_View;
       Scroll_Window : Gtk.Scrolled_Window.Gtk_Scrolled_Window;
       Filter_Entry  : Gtk.Gentry.Gtk_Entry;
 
-      File_List : Full_File_Lists.File_List;
+      File_List     : File_List_Holders.Holder;
    end record;
 
    package Pointers is new Gnatcoll.Refcount.Shared_Pointers(Controller_Record);

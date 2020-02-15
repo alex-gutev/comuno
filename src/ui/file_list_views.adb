@@ -368,26 +368,34 @@ package body File_List_Views is
       return Data.View;
    end Get_View;
 
+   function Get_Path (This : Controller) return Glib.Utf8_String is
+      Data : Controller_Ref := This.Get;
+
+   begin
+      return Data.Path_Entry.Get_Text;
+   end Get_Path;
+
 
    --- Changing File List ---
 
-   function Get_File_List (This : Controller) return Full_File_Lists.File_List is
+   function Get_File_List (This : Controller) return File_Lists.File_List'Class is
       Data : Controller_Ref := This.Get;
 
    begin
-      return Data.File_List;
+      return Data.File_List.Element;
    end Get_File_List;
 
-   procedure Set_File_List (This : Controller; List : Full_File_Lists.File_List) is
-      Data : Controller_Ref := This.Get;
-
+   procedure Set_File_List (This : Controller; List : File_Lists.File_List'Class) is
+      Data  : Controller_Ref := This.Get;
       Empty : Controller;
 
    begin
-      Data.File_List.Set_Listener(Empty);
+      if not Data.File_List.Is_Empty then
+         Data.File_List.Reference.Set_Listener(Empty);
+      end if;
 
-      Data.File_List := List;
-      Data.File_List.Set_Listener(This);
+      Data.File_List.Replace_Element(List);
+      Data.File_List.Reference.Set_Listener(This);
 
    end Set_File_List;
 
@@ -420,10 +428,10 @@ package body File_List_Views is
 
    package body Callbacks is
       procedure Connect_Keypress
-        (This : Controller;
-         Cb : Return_Handlers.Marshallers.Marshaller;
+        (This      : Controller;
+         Cb        : Return_Handlers.Marshallers.Marshaller;
          User_Data : User_Type;
-         After : Boolean := False) is
+         After     : Boolean := False) is
 
          Data : Controller_Ref := This.Get;
 
@@ -437,10 +445,10 @@ package body File_List_Views is
       end Connect_Keypress;
 
       procedure Connect_Row_Activate
-        (This : Controller;
-         Cb : Void_Handlers.Marshallers.Marshaller;
+        (This      : Controller;
+         Cb        : Void_Handlers.Marshallers.Marshaller;
          User_Data : User_Type;
-         After : Boolean := False) is
+         After     : Boolean := False) is
 
          Data : Controller_Ref := This.Get;
 
@@ -452,6 +460,23 @@ package body File_List_Views is
             User_Data,
             After);
       end Connect_Row_Activate;
+
+      procedure Connect_Path_Activate
+        (This      : Controller;
+         Cb        : Void_Handlers.Marshallers.Marshaller;
+         User_Data : User_Type;
+         After     : Boolean := False) is
+
+         Data : Controller_Ref := This.Get;
+
+      begin
+         Void_Handlers.Connect
+           (Gtk.Widget.Gtk_Widget(Data.Path_Entry),
+            Gtk.Gentry.Signal_Activate,
+            Cb,
+            User_Data,
+            After);
+      end Connect_Path_Activate;
 
    end Callbacks;
 
@@ -471,7 +496,7 @@ package body File_List_Views is
       Selection.Get_Selected(Model, Row);
 
       if Row /= Gtk.Tree_Model.Null_Iter then
-         Data.File_List.Selection_Changed(Row);
+         Data.File_List.Reference.Selection_Changed(Row);
       end if;
 
    end On_Selection_Change;
@@ -543,11 +568,7 @@ package body File_List_Views is
 
       Data : Controller_Ref := This.Get;
 
-      Path : Paths.Path :=
-        Paths.Make_Path(Data.Path_Entry.Get_Text);
-
    begin
-      Data.File_List.Change_Path(Path);
       Data.List_View.Grab_Focus;
    end On_Path_Activate;
 
