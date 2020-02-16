@@ -19,6 +19,7 @@ with Gtk.List_Store;
 with Paths;
 with Directory_Entries;
 with File_Lists;
+with Sort_Functions;
 
 private with Gnatcoll.Refcount;
 

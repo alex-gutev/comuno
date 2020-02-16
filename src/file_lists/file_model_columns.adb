@@ -146,12 +146,12 @@ package body File_Model_Columns is
 
    -- Getting Row Values --
 
-   function Get_Entry (Model : in Gtk.List_Store.Gtk_List_Store;
-                       Row : in Gtk.Tree_Model.Gtk_Tree_Iter)
+   function Get_Entry (Model : Tree_Model;
+                       Row   : Row_Iter)
                       return Entry_Ref is
 
       Value : Glib.Values.Gvalue;
-      Ref : Entry_Pointers.Ref;
+      Ref   : Entry_Pointers.Ref;
 
    begin
       Model.Get_Value(Row, 0, Value);
@@ -162,6 +162,11 @@ package body File_Model_Columns is
       return Ref.Get;
 
    end Get_Entry;
+
+   function Get_Entry (Model : Gtk.Tree_Model.Gtk_Tree_Model;
+                       Row : Row_Iter)
+                      return Entry_Ref is
+      (Get_Entry(-Model, Row));
 
 
    -- Marking --
