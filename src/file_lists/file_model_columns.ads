@@ -99,8 +99,12 @@ package File_Model_Columns is
    --
    --  Retrieve the Directory_Entry displayed in Row of Model.
    --
-   function Get_Entry (Model : in Gtk.List_Store.Gtk_List_Store;
-                       Row   : in Gtk.Tree_Model.Gtk_Tree_Iter)
+   function Get_Entry (Model : Tree_Model;
+                       Row   : Row_Iter)
+                      return Entry_Ref;
+
+   function Get_Entry (Model : Gtk.Tree_Model.Gtk_Tree_Model;
+                       Row   : Row_Iter)
                       return Entry_Ref;
 
 
