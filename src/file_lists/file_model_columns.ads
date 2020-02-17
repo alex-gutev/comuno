@@ -35,6 +35,12 @@ package File_Model_Columns is
    subtype Row_Iter is Gtk.Tree_Model.Gtk_Tree_Iter;
 
 
+   --
+   -- Index of the first column that is displayed inside the tree
+   -- view.
+   --
+   Column_Start : constant Glib.Gint;
+
    -- Reference Counting --
 
    --
@@ -125,6 +131,8 @@ package File_Model_Columns is
    procedure Set_Marked (Model : in Tree_Model; Row : in Row_Iter; Marked : in Boolean);
 
 private
+
+   Column_Start : constant Glib.Gint := 2;
 
    type Model_Ref is new Ada.Finalization.Controlled with record
       Model : List_Store;

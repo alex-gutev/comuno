@@ -14,7 +14,11 @@ with Ada.Exceptions;
 with Glib;
 with Glib.Object;
 
+with Gtk.Tree_Sortable;
+with Gtk.Enums;
+
 with File_System;
+with File_Columns;
 
 package body Full_File_Lists is
 
@@ -22,6 +26,7 @@ package body Full_File_Lists is
 
    use type Glib.Gint;
    use type File_System.File_Type;
+   use type File_Columns.Column_Ptr;
 
    subtype List_Store is Gtk.List_Store.Gtk_List_Store;
    subtype Model_Ref is File_Model_Columns.Model_Ref;
@@ -150,6 +155,23 @@ package body Full_File_Lists is
    procedure Update_Selection (This : in out File_List_Data; Move_To_Old : in Boolean);
 
 
+   -- Sorting --
+
+   --
+   -- Set_Sort_Column
+   --
+   --  Set the sort column of New_List to the sort column of Old_List.
+   --
+   procedure Set_Sort_Column (Old_List : Gtk.List_Store.Gtk_List_Store; New_List : Gtk.List_Store.Gtk_List_Store);
+
+   --
+   -- On_Sort_Column_Changed
+   --
+   --  Tree Model sort column changed signal handler.
+   --
+   procedure On_Sort_Column_Changed (Model : Gtk.Tree_Sortable.Gtk_Tree_Sortable);
+
+
    --- Implementation ---
 
 
@@ -161,11 +183,40 @@ package body Full_File_Lists is
    --  Create a new Gtk List Store tree model.
    --
    function Make_List_Store return Model_Ref is
+      Model : Gtk.List_Store.Gtk_List_Store;
+      Sortable : Gtk.Tree_Sortable.Gtk_Tree_Sortable;
+
    begin
+      Gtk.List_Store.Gtk_New(Model, File_Model_Columns.Column_Types);
+      Sortable := Gtk.List_Store."+"(Model);
+
+      Gtk.Tree_Sortable.On_Sort_Column_Changed(Sortable, On_Sort_Column_Changed'Access);
+
       return Ref : Model_Ref do
-           Ref.Set(Gtk.List_Store.Gtk_List_Store_Newv(File_Model_Columns.Column_Types));
+           Ref.Set(Model);
       end return;
    end Make_List_Store;
+
+   --
+   -- Init_List_Store
+   --
+   --  Initialize a list store model.
+   --
+   --  Sets the sort function of each column.
+   --
+   procedure Init_List_Store (Model : Gtk.List_Store.Gtk_List_Store) is
+      Sortable : Gtk.Tree_Sortable.Gtk_Tree_Sortable :=
+        Gtk.List_Store."+"(Model);
+
+   begin
+      for Column of File_Columns.All_Columns loop
+         Gtk.Tree_Sortable.Set_Sort_Func
+           (Sortable,
+            Column.Get_Index,
+            Column.Get_Sort_Function(Gtk.Enums.Sort_Ascending));
+      end loop;
+   end Init_List_Store;
+
 
    --
    -- Make_List_Store
@@ -174,7 +225,9 @@ package body Full_File_Lists is
    --
    function Make_Tree_Model return Model_Ref is
    begin
-      return Make_List_Store;
+      return Model : Model_Ref := Make_List_Store do
+         Init_List_Store(Model.Get);
+      end return;
    end Make_Tree_Model;
 
 
@@ -325,7 +378,9 @@ package body Full_File_Lists is
 
       -- TODO: Load Icons
 
-      -- TODO: Set_Sort_Column
+      -- Set sort column of new list to sort column of previous list
+      Set_Sort_Column(This.List.Get, List.Get);
+
       This.List := List;
 
       -- Inform listener that the model has changed
@@ -499,5 +554,44 @@ package body Full_File_Lists is
          Data.Selection := Row;
       end if;
    end Selection_Changed;
+
+
+   -- Sorting --
+
+   procedure Set_Sort_Column (Old_List : Gtk.List_Store.Gtk_List_Store; New_List : Gtk.List_Store.Gtk_List_Store) is
+      Id    : Glib.Gint;
+      Order : Gtk.Enums.Gtk_Sort_Type;
+
+   begin
+      Old_List.Get_Sort_Column_Id(Id, Order);
+      New_List.Set_Sort_Column_Id(Id, Order);
+   end Set_Sort_Column;
+
+
+   procedure On_Sort_Column_Changed (Model : Gtk.Tree_Sortable.Gtk_Tree_Sortable) is
+      Id    : Glib.Gint;
+      Order : Gtk.Enums.Gtk_Sort_Type;
+
+      Index : Glib.Gint;
+
+   begin
+      Gtk.Tree_Sortable.Get_Sort_Column_Id(Model, Id, Order);
+
+      Index := Id - File_Model_Columns.Column_Start;
+
+      if Index >= 0 then
+         declare
+            Column : File_Columns.Column_Ptr :=
+              File_Columns.Get_Column(Natural(Index));
+
+         begin
+            if Column /= null then
+               Gtk.Tree_Sortable.Set_Sort_Func(Model, Id, Column.Get_Sort_Function(Order));
+            end if;
+
+         end;
+      end if;
+
+   end On_Sort_Column_Changed;
 
 end Full_File_Lists;
