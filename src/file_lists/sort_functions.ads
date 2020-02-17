@@ -25,7 +25,7 @@ package Sort_Functions is
 
    subtype Iter is Gtk.Tree_Model.Gtk_Tree_Iter;
    subtype Tree_Model is Gtk.Tree_Model.Gtk_Tree_Model;
-   subtype Order is Glib.Gint range -1 .. 1;
+   subtype Order is Glib.Gint;
 
 
    -- Sort Order Constants --
