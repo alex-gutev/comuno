@@ -413,6 +413,13 @@ package body File_List_Views is
       Data : Controller_Ref := This.Get;
 
    begin
+      -- Increment the reference count as it appears the GTK Tree View
+      -- does not increment it, when setting the model, but does
+      -- decrement it when the model is changed or the Tree View is
+      -- destroyed.
+
+      Model.Ref;
+
       Data.List_View.Set_Model(Gtk.List_Store."+"(Model));
    end Change_Model;
 
