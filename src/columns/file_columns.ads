@@ -9,6 +9,12 @@
 
 pragma License (GPL);
 
+with Ada.Containers.Vectors;
+
+with Glib;
+
+with Gtk.Enums;
+with Gtk.Tree_Sortable;
 with Gtk.Tree_View;
 with Gtk.Tree_View_Column;
 
@@ -27,6 +33,8 @@ package File_Columns is
    subtype Tree_View is Gtk.Tree_View.Gtk_Tree_View;
    subtype Tree_View_Column is Gtk.Tree_View_Column.Gtk_Tree_View_Column;
 
+   subtype Sort_Function is Gtk.Tree_Sortable.Gtk_Tree_Iter_Compare_Func;
+
 
    -- Column Descriptors --
 
@@ -38,12 +46,30 @@ package File_Columns is
    type Column is abstract tagged private;
    type Column_Ptr is access all Column'Class;
 
+   package Column_Vectors is new Ada.Containers.Vectors
+     (Index_Type   => Natural,
+      Element_Type => Column_Ptr);
+
    --
    -- Create
    --
    --  Create a new GTK Tree View Column.
    --
    function Create (Col : Column) return Tree_View_Column is abstract;
+
+   --
+   -- Get_Sort_Function
+   --
+   --  Returns the sort function for the column given the sort order.
+   --
+   function Get_Sort_Function (Col : Column; Order : Gtk.Enums.Gtk_Sort_Type) return Sort_Function is abstract;
+
+   --
+   -- Get_Index
+   --
+   --  Returns the column's index in the tree model.
+   --
+   function Get_Index (Col : Column'Class) return Glib.Gint;
 
 
    -- Retrieving Column Descriptors --
@@ -57,6 +83,32 @@ package File_Columns is
    --
    function Get_Column (Name : String) return Column_Ptr;
 
+   --
+   -- Get_Column
+   --
+   --  Returns the Column descriptor object for the column at index
+   --  Index within the Tree Model.
+   --
+   --  If Index is greater than the number of columns, null is
+   --  returned.
+   --
+   function Get_Column (Index : Natural) return Column_Ptr;
+
+   --
+   -- Num_Columns
+   --
+   --  Returns the number of columns.
+   --
+   function Num_Columns return Natural;
+
+   --
+   -- All_Columns
+   --
+   --  Return a vector containing all the columns in the order they
+   --  are added to the Tree Model.
+   --
+   function All_Columns return Column_Vectors.Vector;
+
 
    -- Utilities --
 
@@ -69,6 +121,8 @@ package File_Columns is
 
 private
 
-   type Column is abstract tagged null record;
+   type Column is abstract tagged record
+      Index : Glib.Gint;
+   end record;
 
 end File_Columns;

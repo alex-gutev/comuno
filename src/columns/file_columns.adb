@@ -7,17 +7,18 @@
 --  but WITHOUT ANY WARRANTY;  without even the implied warranty of MERCHAN-
 --  TABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
+pragma License (GPL);
+
+with Ada.Containers;
 with Ada.Containers.Indefinite_Hashed_Maps;
 with Ada.Strings.Hash;
 
-with Glib;
-with Gtk.Cell_Renderer_Text;
+with File_Columns.Name_Columns;
 
 package body File_Columns is
 
-   -- GTK Widget Subtypes --
-
-   subtype Cell_Renderer_Text is Gtk.Cell_Renderer_Text.Gtk_Cell_Renderer_Text;
+   use type Ada.Containers.Count_Type;
+   use type Glib.Gint;
 
 
    -- Builtin Column Map --
@@ -33,6 +34,12 @@ package body File_Columns is
    --
    Column_Map : Column_Maps.Map;
 
+   --
+   -- Vector storing all columns in the order in which they are added
+   -- to the Tree Model.
+   --
+   Column_Vector : Column_Vectors.Vector;
+
 
    function Get_Column (Name : String) return Column_Ptr is
       Cursor : Column_Maps.Cursor := Column_Map.Find(Name);
@@ -43,6 +50,19 @@ package body File_Columns is
                  null);
    end Get_Column;
 
+   function Get_Column (Index : Natural) return Column_Ptr is
+     (if Ada.Containers.Count_Type(Index) < Column_Vector.Length then
+         Column_Vector(Index)
+      else null);
+
+
+   function All_Columns return Column_Vectors.Vector is
+     (Column_Vector);
+
+   function Num_Columns return Natural is
+     (Natural(Column_Vector.Length));
+
+
    procedure Append_Column (View : Tree_View; Col : Tree_View_Column) is
       Dummy : Glib.Gint;
 
@@ -50,56 +70,26 @@ package body File_Columns is
       Dummy := View.Append_Column(Col);
    end Append_Column;
 
+   function Get_Index (Col : Column'Class) return Glib.Gint is
+      (Col.Index);
 
-   -- Builtin Columns --
+
+   -- Adding Columns --
 
    --
-   -- Contains Column descriptor definition for the file name column.
+   -- Add_Column
    --
-   package Name_Columns is
+   --  Add a column with a given identifier to Column_Map and
+   --  Column_Vector.
+   --
+   procedure Add_Column (Name : in String; Col : in Column'Class) is
+      Pos : Column_Maps.Cursor;
+      Dummy : Boolean;
+   begin
+      Column_Map.Insert(Name, Col, Pos, Dummy);
+      Column_Vector.Append(Column_Map.Reference(Pos).Element);
+   end Add_Column;
 
-      -- Column Index
-      Name_Index : Glib.Gint := 2;
-
-      --
-      -- Name_Column
-      --
-      --  Name Column Descriptor
-      --
-      type Name_Column is new Column with null record;
-
-      function Create (This : Name_Column) return Tree_View_Column;
-
-   end Name_Columns;
-
-   package body Name_Columns is
-
-      function Create (This : Name_Column) return Tree_View_Column is
-         Col : Tree_View_Column;
-         Cell : Cell_Renderer_Text;
-
-      begin
-         -- Make Column --
-         Gtk.Tree_View_Column.Gtk_New(Col);
-         Col.Set_Title("Name");
-
-         -- Make Cell Renderer --
-         Gtk.Cell_Renderer_Text.Gtk_New(Cell);
-
-         -- Add cell to column --
-         Col.Pack_Start(Cell, True);
-
-         -- Bind Tree View Column to Model --
-         Col.Add_Attribute
-           (Cell,
-            Glib.Property_Name(Glib.Property(Gtk.Cell_Renderer_Text.Text_Property)),
-            Name_Index);
-
-         return Col;
-
-      end Create;
-
-   end Name_Columns;
 
 begin
 
@@ -108,8 +98,10 @@ begin
 Add_Name_Column:
    declare
       Col : Name_Columns.Name_Column;
+
    begin
-      Column_Map.Insert("name", Col);
+      Column(Col).Index := 2 + Glib.Gint(Column_Map.Length);
+      Add_Column("name", Col);
    end Add_Name_Column;
 
 end File_Columns;
