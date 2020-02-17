@@ -103,6 +103,6 @@ private
      (Original_Path  => Paths.Make_Path(Paths.Parent_Component),
       Canonical_Path => Paths.Canonical_Paths.Canonicalize(Paths.Make_Path(Paths.Parent_Component)),
       Kind           => File_System.Parent,
-      Attributes     => (Kind => File_System.Directory, others => <>));
+      Attributes     => (Kind => File_System.Parent, others => <>));
 
 end Directory_Entries;
