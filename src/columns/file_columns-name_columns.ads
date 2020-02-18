@@ -30,9 +30,16 @@ package File_Columns.Name_Columns is
 
    -- Operations --
 
+   function Column_Type (Col : Name_Column) return Glib.Gtype;
+
    function Create (This : Name_Column) return Tree_View_Column;
 
    function Get_Sort_Function (This : Name_Column; Order : Gtk.Enums.Gtk_Sort_Type)
                               return Sort_Function;
+
+   procedure Set_Row_Data (This  : Name_Column;
+                           Model : Gtk.List_Store.Gtk_List_Store;
+                           Row   : Gtk.Tree_Model.Gtk_Tree_Iter;
+                           Ent   : Directory_Entries.Directory_Entry);
 
 end File_Columns.Name_Columns;

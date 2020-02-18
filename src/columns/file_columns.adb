@@ -13,6 +13,7 @@ with Ada.Containers;
 with Ada.Containers.Indefinite_Hashed_Maps;
 with Ada.Strings.Hash;
 
+with File_Model_Columns;
 with File_Columns.Name_Columns;
 
 package body File_Columns is
@@ -62,6 +63,25 @@ package body File_Columns is
    function Num_Columns return Natural is
      (Natural(Column_Vector.Length));
 
+   function Column_Types return Glib.Gtype_Array is
+      Types : Glib.Gtype_Array(0 .. Glib.Guint(Column_Vector.Last_Index));
+
+   begin
+      for I in Types'Range loop
+         declare
+            Col : Column_Ptr := Column_Vector(Natural(I));
+
+         begin
+            Types(I) := Col.Column_Type;
+
+         end;
+      end loop;
+
+      return Types;
+
+   end Column_Types;
+
+
 
    procedure Append_Column (View : Tree_View; Col : Tree_View_Column) is
       Dummy : Glib.Gint;
@@ -100,7 +120,7 @@ Add_Name_Column:
       Col : Name_Columns.Name_Column;
 
    begin
-      Column(Col).Index := 2 + Glib.Gint(Column_Map.Length);
+      Column(Col).Index := File_Model_Columns.Column_Start + Glib.Gint(Column_Map.Length);
       Add_Column("name", Col);
    end Add_Name_Column;
 

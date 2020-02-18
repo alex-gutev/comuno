@@ -51,6 +51,12 @@ package body File_Columns.Name_Columns is
    end Create;
 
 
+   -- Column Type --
+
+   function Column_Type (Col : Name_Column) return Glib.Gtype is
+      (Glib.Gtype_String);
+
+
    -- Sorting --
 
    function Sort_Type_Inverted is new
@@ -73,5 +79,16 @@ package body File_Columns.Name_Columns is
          return Sort_Inverted'Access;
       end if;
    end Get_Sort_Function;
+
+
+   -- Setting Row Data --
+
+   procedure Set_Row_Data (This  : Name_Column;
+                           Model : Gtk.List_Store.Gtk_List_Store;
+                           Row   : Gtk.Tree_Model.Gtk_Tree_Iter;
+                           Ent   : Directory_Entries.Directory_Entry) is
+   begin
+      Model.Set(Row, This.Get_Index, Directory_Entries.Subpath(Ent).Basename);
+   end Set_Row_Data;
 
 end File_Columns.Name_Columns;
