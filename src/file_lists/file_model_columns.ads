@@ -60,7 +60,7 @@ package File_Model_Columns is
    --
    --  Set the List_Store to which the reference refers to.
    --
-   --  NOTE: The reference count of Model is not increment, as a
+   --  NOTE: The reference count of Model is not incremented, as a
    --  List_Store model is created with a reference count of 1.
    --
    procedure Set (Ref : in out Model_Ref; Model : in List_Store);

@@ -14,9 +14,19 @@ with System.Address_To_Access_Conversions;
 
 with Glib.Values;
 
+with File_Columns;
+
 package body File_Model_Columns is
 
+   use type Glib.Guint;
    use type Gtk.List_Store.Gtk_List_Store;
+
+   -- Index of the column storing the full entry
+   Column_Entry  : constant Glib.Gint := 0;
+
+   -- Index of the column storing the marked flag
+   Column_Marked : constant Glib.Gint := 1;
+
 
    -- Packages --
 
@@ -60,11 +70,15 @@ package body File_Model_Columns is
    Entry_Type : Glib.Gtype;
 
    function Column_Types return Glib.Gtype_Array is
-      Types : Glib.Gtype_Array :=
-        (0 => Entry_Type,
-         1 => Glib.Gtype_Boolean,
-         2 => Glib.Gtype_String);
+      Col_Types : Glib.Gtype_Array := File_Columns.Column_Types;
+      Types     : Glib.Gtype_Array (0 .. Glib.Guint(Column_Start) + Col_Types'Last);
+
    begin
+      Types(Glib.Guint(Column_Entry))  := Entry_Type;
+      Types(Glib.Guint(Column_Marked)) := Glib.Gtype_Boolean;
+
+      Types(Glib.Guint(Column_Start) .. Types'Last) := Col_Types;
+
       return Types;
    end Column_Types;
 
@@ -126,8 +140,8 @@ package body File_Model_Columns is
 
    -- Setting Row Values --
 
-   procedure Set_Values (Model : in Gtk.List_Store.Gtk_List_Store;
-                         Row : in Gtk.Tree_Model.Gtk_Tree_Iter;
+   procedure Set_Values (Model     : in Gtk.List_Store.Gtk_List_Store;
+                         Row       : in Gtk.Tree_Model.Gtk_Tree_Iter;
                          Dir_Entry : in Directory_Entries.Directory_Entry) is
 
       Value : Glib.Values.Gvalue;
@@ -135,9 +149,21 @@ package body File_Model_Columns is
    begin
       Box_Entry(Dir_Entry, Value);
 
-      Model.Set_Value(Row, 0, Value);
-      Model.Set(Row, 1, False);
-      Model.Set(Row, 2, Directory_Entries.Subpath(Dir_Entry).Basename);
+      Model.Set_Value(Row, Column_Entry, Value);
+      Model.Set(Row, Column_Marked, False);
+
+      -- Set the data for each displayed column
+
+      for I in 0 .. File_Columns.Num_Columns - 1 loop
+         declare
+            Column : File_Columns.Column_Ptr :=
+              File_Columns.Get_Column(I);
+
+         begin
+            Column.Set_Row_Data(Model, Row, Dir_Entry);
+
+         end;
+      end loop;
 
       Glib.Values.Unset(Value);
 
@@ -154,7 +180,7 @@ package body File_Model_Columns is
       Ref   : Entry_Pointers.Ref;
 
    begin
-      Model.Get_Value(Row, 0, Value);
+      Model.Get_Value(Row, Column_Entry, Value);
       Ref := Conversions.To_Pointer(Glib.Values.Get_Boxed(Value)).all;
 
       Glib.Values.Unset(Value);
@@ -173,13 +199,13 @@ package body File_Model_Columns is
 
    function Is_Marked (Model : in Tree_Model; Row : in Row_Iter) return Boolean is
    begin
-      return Model.Get_Boolean(Row, 1);
+      return Model.Get_Boolean(Row, Column_Marked);
    end Is_Marked;
 
 
    procedure Set_Marked (Model : in Tree_Model; Row : in Row_Iter; Marked : in Boolean) is
    begin
-      Model.Set(Row, 1, Marked);
+      Model.Set(Row, Column_Marked, Marked);
    end Set_Marked;
 
 
