@@ -10,9 +10,13 @@
 pragma License (GPL);
 
 with Glib;
+with Glib.Properties;
 with Gtk.Cell_Renderer_Text;
 
 with Sort_Functions;
+with File_Model_Columns;
+
+with File_Columns.Data_Functions;
 
 package body File_Columns.Name_Columns is
    use type Gtk.Enums.Gtk_Sort_Type;
@@ -20,10 +24,20 @@ package body File_Columns.Name_Columns is
    subtype Cell_Renderer_Text is Gtk.Cell_Renderer_Text.Gtk_Cell_Renderer_Text;
 
 
+   -- Data Function --
+
+   package Set_Data_Func is new Gtk.Tree_View_Column.Set_Cell_Data_Func_User_Data
+     (Glib.Gint);
+
+   function Format_Name (Ent : Directory_Entries.Directory_Entry) return String;
+
+   procedure Data_Function is new Data_Functions.Memoized_Data_Function (Format_Name);
+
+
    -- Column Creation --
 
    function Create (This : Name_Column) return Tree_View_Column is
-      Col : Tree_View_Column;
+      Col  : Tree_View_Column;
       Cell : Cell_Renderer_Text;
 
    begin
@@ -37,11 +51,8 @@ package body File_Columns.Name_Columns is
       -- Add cell to column --
       Col.Pack_Start(Cell, True);
 
-      -- Bind Tree View Column to Model --
-      Col.Add_Attribute
-        (Cell,
-         Glib.Property_Name(Glib.Property(Gtk.Cell_Renderer_Text.Text_Property)),
-         This.Get_Index);
+      -- Set Cell Data Function --
+      Set_Data_Func.Set_Cell_Data_Func(Col, Cell, Data_Function'Access, This.Get_Index);
 
       Col.Set_Expand(True);
       Col.Set_Sort_Column_Id(This.Index);
@@ -81,6 +92,12 @@ package body File_Columns.Name_Columns is
    end Get_Sort_Function;
 
 
+   -- Data Function --
+
+   function Format_Name (Ent : Directory_Entries.Directory_Entry) return String is
+      (Directory_Entries.Subpath(Ent).Filename);
+
+
    -- Setting Row Data --
 
    procedure Set_Row_Data (This  : Name_Column;
@@ -88,7 +105,7 @@ package body File_Columns.Name_Columns is
                            Row   : Gtk.Tree_Model.Gtk_Tree_Iter;
                            Ent   : Directory_Entries.Directory_Entry) is
    begin
-      Model.Set(Row, This.Get_Index, Directory_Entries.Subpath(Ent).Basename);
+      Model.Set(Row, This.Get_Index, Directory_Entries.Subpath(Ent).Filename);
    end Set_Row_Data;
 
 end File_Columns.Name_Columns;
