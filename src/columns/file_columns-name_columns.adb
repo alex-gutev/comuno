@@ -10,9 +10,16 @@
 pragma License (GPL);
 
 with Glib;
+with Glib.Properties;
+
+with Gtk.Cell_Layout;
+with Gtk.Cell_Renderer;
 with Gtk.Cell_Renderer_Text;
+with Gtk.Tree_Model;
+with Gtk.List_Store;
 
 with Sort_Functions;
+with File_Model_Columns;
 
 package body File_Columns.Name_Columns is
    use type Gtk.Enums.Gtk_Sort_Type;
@@ -20,10 +27,23 @@ package body File_Columns.Name_Columns is
    subtype Cell_Renderer_Text is Gtk.Cell_Renderer_Text.Gtk_Cell_Renderer_Text;
 
 
+   -- Data Function --
+
+   package Set_Data_Func is new Gtk.Tree_View_Column.Set_Cell_Data_Func_User_Data
+     (Glib.Gint);
+
+   procedure Data_Function
+     (Layout :                 Gtk.Cell_Layout.Gtk_Cell_Layout;
+      Cell   : not null access Gtk.Cell_Renderer.Gtk_Cell_Renderer_Record'Class;
+      Model  :                 Gtk.Tree_Model.Gtk_Tree_Model;
+      Row    :                 Gtk.Tree_Model.Gtk_Tree_Iter;
+      Index  :                 Glib.Gint);
+
+
    -- Column Creation --
 
    function Create (This : Name_Column) return Tree_View_Column is
-      Col : Tree_View_Column;
+      Col  : Tree_View_Column;
       Cell : Cell_Renderer_Text;
 
    begin
@@ -37,11 +57,8 @@ package body File_Columns.Name_Columns is
       -- Add cell to column --
       Col.Pack_Start(Cell, True);
 
-      -- Bind Tree View Column to Model --
-      Col.Add_Attribute
-        (Cell,
-         Glib.Property_Name(Glib.Property(Gtk.Cell_Renderer_Text.Text_Property)),
-         This.Get_Index);
+      -- Set Cell Data Function --
+      Set_Data_Func.Set_Cell_Data_Func(Col, Cell, Data_Function'Access, This.Get_Index);
 
       Col.Set_Expand(True);
       Col.Set_Sort_Column_Id(This.Index);
@@ -81,6 +98,28 @@ package body File_Columns.Name_Columns is
    end Get_Sort_Function;
 
 
+   -- Data Function --
+
+   procedure Data_Function
+     (Layout :                 Gtk.Cell_Layout.Gtk_Cell_Layout;
+      Cell   : not null access Gtk.Cell_Renderer.Gtk_Cell_Renderer_Record'Class;
+      Model  :                 Gtk.Tree_Model.Gtk_Tree_Model;
+      Row    :                 Gtk.Tree_Model.Gtk_Tree_Iter;
+      Index  :                 Glib.Gint) is
+
+      Ent : Directory_Entries.Directory_Entry :=
+        File_Model_Columns.Get_Entry(Model, Row);
+
+   begin
+
+      Glib.Properties.Set_Property
+        (Cell,
+         Gtk.Cell_Renderer_Text.Text_Property,
+         Directory_Entries.Subpath(Ent).Filename);
+
+   end Data_Function;
+
+
    -- Setting Row Data --
 
    procedure Set_Row_Data (This  : Name_Column;
@@ -88,7 +127,7 @@ package body File_Columns.Name_Columns is
                            Row   : Gtk.Tree_Model.Gtk_Tree_Iter;
                            Ent   : Directory_Entries.Directory_Entry) is
    begin
-      Model.Set(Row, This.Get_Index, Directory_Entries.Subpath(Ent).Basename);
+      Model.Set(Row, This.Get_Index, Directory_Entries.Subpath(Ent).Filename);
    end Set_Row_Data;
 
 end File_Columns.Name_Columns;

@@ -152,19 +152,6 @@ package body File_Model_Columns is
       Model.Set_Value(Row, Column_Entry, Value);
       Model.Set(Row, Column_Marked, False);
 
-      -- Set the data for each displayed column
-
-      for I in 0 .. File_Columns.Num_Columns - 1 loop
-         declare
-            Column : File_Columns.Column_Ptr :=
-              File_Columns.Get_Column(I);
-
-         begin
-            Column.Set_Row_Data(Model, Row, Dir_Entry);
-
-         end;
-      end loop;
-
       Glib.Values.Unset(Value);
 
    end Set_Values;
