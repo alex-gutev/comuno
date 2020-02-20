@@ -11,15 +11,12 @@ pragma License (GPL);
 
 with Glib;
 with Glib.Properties;
-
-with Gtk.Cell_Layout;
-with Gtk.Cell_Renderer;
 with Gtk.Cell_Renderer_Text;
-with Gtk.Tree_Model;
-with Gtk.List_Store;
 
 with Sort_Functions;
 with File_Model_Columns;
+
+with File_Columns.Data_Functions;
 
 package body File_Columns.Name_Columns is
    use type Gtk.Enums.Gtk_Sort_Type;
@@ -32,12 +29,9 @@ package body File_Columns.Name_Columns is
    package Set_Data_Func is new Gtk.Tree_View_Column.Set_Cell_Data_Func_User_Data
      (Glib.Gint);
 
-   procedure Data_Function
-     (Layout :                 Gtk.Cell_Layout.Gtk_Cell_Layout;
-      Cell   : not null access Gtk.Cell_Renderer.Gtk_Cell_Renderer_Record'Class;
-      Model  :                 Gtk.Tree_Model.Gtk_Tree_Model;
-      Row    :                 Gtk.Tree_Model.Gtk_Tree_Iter;
-      Index  :                 Glib.Gint);
+   function Format_Name (Ent : Directory_Entries.Directory_Entry) return String;
+
+   procedure Data_Function is new Data_Functions.Memoized_Data_Function (Format_Name);
 
 
    -- Column Creation --
@@ -100,24 +94,8 @@ package body File_Columns.Name_Columns is
 
    -- Data Function --
 
-   procedure Data_Function
-     (Layout :                 Gtk.Cell_Layout.Gtk_Cell_Layout;
-      Cell   : not null access Gtk.Cell_Renderer.Gtk_Cell_Renderer_Record'Class;
-      Model  :                 Gtk.Tree_Model.Gtk_Tree_Model;
-      Row    :                 Gtk.Tree_Model.Gtk_Tree_Iter;
-      Index  :                 Glib.Gint) is
-
-      Ent : Directory_Entries.Directory_Entry :=
-        File_Model_Columns.Get_Entry(Model, Row);
-
-   begin
-
-      Glib.Properties.Set_Property
-        (Cell,
-         Gtk.Cell_Renderer_Text.Text_Property,
-         Directory_Entries.Subpath(Ent).Filename);
-
-   end Data_Function;
+   function Format_Name (Ent : Directory_Entries.Directory_Entry) return String is
+      (Directory_Entries.Subpath(Ent).Filename);
 
 
    -- Setting Row Data --
