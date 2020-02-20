@@ -95,17 +95,7 @@ package body File_Columns.Name_Columns is
    -- Data Function --
 
    function Format_Name (Ent : Directory_Entries.Directory_Entry) return String is
-      (Directory_Entries.Subpath(Ent).Filename);
+     (Directory_Entries.Subpath(Ent).Filename);
 
-
-   -- Setting Row Data --
-
-   procedure Set_Row_Data (This  : Name_Column;
-                           Model : Gtk.List_Store.Gtk_List_Store;
-                           Row   : Gtk.Tree_Model.Gtk_Tree_Iter;
-                           Ent   : Directory_Entries.Directory_Entry) is
-   begin
-      Model.Set(Row, This.Get_Index, Directory_Entries.Subpath(Ent).Filename);
-   end Set_Row_Data;
 
 end File_Columns.Name_Columns;

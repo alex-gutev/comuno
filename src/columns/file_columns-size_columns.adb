@@ -159,18 +159,4 @@ package body File_Columns.Size_Columns is
       end case;
    end Format_Size;
 
-
-   procedure Set_Row_Data (This  : Size_Column;
-                           Model : Gtk.List_Store.Gtk_List_Store;
-                           Row   : Gtk.Tree_Model.Gtk_Tree_Iter;
-                           Ent   : Directory_Entries.Directory_Entry) is
-
-   begin
-      Model.Set
-        (Row,
-         This.Get_Index,
-         Format_Size(Ent));
-
-   end Set_Row_Data;
-
 end File_Columns.Size_Columns;
