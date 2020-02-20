@@ -17,6 +17,7 @@ with File_Model_Columns;
 
 with File_Columns.Name_Columns;
 with File_Columns.Full_Name_Columns;
+with File_Columns.Extension_Columns;
 with File_Columns.Size_Columns;
 
 package body File_Columns is
@@ -130,6 +131,7 @@ begin
 
    Add_Column("name", Name_Columns.Name_Column'(Column with others => <>));
    Add_Column("full-name", Full_Name_Columns.Full_Name_Column'(Column with others => <>));
+   Add_Column("extension", Extension_Columns.Extension_Column'(Column with others => <>));
    Add_Column("size", Size_Columns.Size_Column'(Column with others => <>));
 
 end File_Columns;
