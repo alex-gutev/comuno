@@ -14,7 +14,9 @@ with Ada.Containers.Indefinite_Hashed_Maps;
 with Ada.Strings.Hash;
 
 with File_Model_Columns;
+
 with File_Columns.Name_Columns;
+with File_Columns.Full_Name_Columns;
 with File_Columns.Size_Columns;
 
 package body File_Columns is
@@ -106,9 +108,19 @@ package body File_Columns is
    procedure Add_Column (Name : in String; Col : in Column'Class) is
       Pos : Column_Maps.Cursor;
       Dummy : Boolean;
+
    begin
       Column_Map.Insert(Name, Col, Pos, Dummy);
-      Column_Vector.Append(Column_Map.Reference(Pos).Element);
+
+      declare
+         Ref : Column_Maps.Reference_Type :=
+           Column_Map.Reference(Pos);
+
+      begin
+         Ref.Element.Index := File_Model_Columns.Column_Start + Glib.Gint(Column_Vector.Length);
+         Column_Vector.Append(Ref.Element);
+      end;
+
    end Add_Column;
 
 
@@ -116,21 +128,8 @@ begin
 
    -- Add Builtin Columns --
 
-Name_Column:
-   declare
-      Col : Name_Columns.Name_Column;
-
-   begin
-      Column(Col).Index := File_Model_Columns.Column_Start + Glib.Gint(Column_Map.Length);
-      Add_Column("name", Col);
-   end Name_Column;
-
-Size_Column:
-   declare
-      Col : Size_Columns.Size_Column;
-   begin
-      Column(Col).Index := File_Model_Columns.Column_Start + Glib.Gint(Column_Map.Length);
-      Add_Column("size", Col);
-   end Size_Column;
+   Add_Column("name", Name_Columns.Name_Column'(Column with others => <>));
+   Add_Column("full-name", Full_Name_Columns.Full_Name_Column'(Column with others => <>));
+   Add_Column("size", Size_Columns.Size_Column'(Column with others => <>));
 
 end File_Columns;
