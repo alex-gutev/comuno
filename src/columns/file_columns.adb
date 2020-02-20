@@ -15,6 +15,7 @@ with Ada.Strings.Hash;
 
 with File_Model_Columns;
 with File_Columns.Name_Columns;
+with File_Columns.Size_Columns;
 
 package body File_Columns is
 
@@ -115,13 +116,21 @@ begin
 
    -- Add Builtin Columns --
 
-Add_Name_Column:
+Name_Column:
    declare
       Col : Name_Columns.Name_Column;
 
    begin
       Column(Col).Index := File_Model_Columns.Column_Start + Glib.Gint(Column_Map.Length);
       Add_Column("name", Col);
-   end Add_Name_Column;
+   end Name_Column;
+
+Size_Column:
+   declare
+      Col : Size_Columns.Size_Column;
+   begin
+      Column(Col).Index := File_Model_Columns.Column_Start + Glib.Gint(Column_Map.Length);
+      Add_Column("size", Col);
+   end Size_Column;
 
 end File_Columns;
