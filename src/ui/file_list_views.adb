@@ -196,9 +196,11 @@ package body File_List_Views is
 
    procedure Init_Columns (View : Gtk_Tree_View) is
       Name : File_Columns.Column_Ptr := File_Columns.Get_Column("name");
+      Size : File_Columns.Column_Ptr := File_Columns.Get_Column("size");
 
    begin
       File_Columns.Append_Column(View, Name.Create);
+      File_Columns.Append_Column(View, Size.Create);
    end Init_Columns;
 
 
