@@ -76,22 +76,6 @@ package File_Columns is
    function Get_Sort_Function (Col : Column; Order : Gtk.Enums.Gtk_Sort_Type) return Sort_Function is abstract;
 
    --
-   -- Set_Row_Data
-   --
-   --  Set the column's data for a particular row inside a tree model.
-   --
-   --  Col:         The Column descriptor object
-   --  Model:       The tree model
-   --  Row:         The row iterator
-   --  Dir_Entry:   The directory entry
-   --
-   procedure Set_Row_Data (Col       : Column;
-                           Model     : Gtk.List_Store.Gtk_List_Store;
-                           Row       : Gtk.Tree_Model.Gtk_Tree_Iter;
-                           Dir_entry : Directory_Entries.Directory_Entry)
-     is abstract;
-
-   --
    -- Get_Index
    --
    --  Returns the column's index in the tree model.

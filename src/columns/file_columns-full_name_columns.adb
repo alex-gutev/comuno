@@ -97,14 +97,4 @@ package body File_Columns.Full_Name_Columns is
       (Directory_Entries.Subpath(Ent).Basename);
 
 
-   -- Setting Row Data --
-
-   procedure Set_Row_Data (This  : Full_Name_Column;
-                           Model : Gtk.List_Store.Gtk_List_Store;
-                           Row   : Gtk.Tree_Model.Gtk_Tree_Iter;
-                           Ent   : Directory_Entries.Directory_Entry) is
-   begin
-      Model.Set(Row, This.Get_Index, Directory_Entries.Subpath(Ent).Basename);
-   end Set_Row_Data;
-
 end File_Columns.Full_Name_Columns;

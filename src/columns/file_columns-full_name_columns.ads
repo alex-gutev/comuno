@@ -31,16 +31,11 @@ package File_Columns.Full_Name_Columns is
 
    -- Operations --
 
-   function Column_Type (Col : Full_Name_Column) return Glib.Gtype;
+   overriding function Column_Type (Col : Full_Name_Column) return Glib.Gtype;
 
-   function Create (This : Full_Name_Column) return Tree_View_Column;
+   overriding function Create (This : Full_Name_Column) return Tree_View_Column;
 
-   function Get_Sort_Function (This : Full_Name_Column; Order : Gtk.Enums.Gtk_Sort_Type)
-                              return Sort_Function;
-
-   procedure Set_Row_Data (This  : Full_Name_Column;
-                           Model : Gtk.List_Store.Gtk_List_Store;
-                           Row   : Gtk.Tree_Model.Gtk_Tree_Iter;
-                           Ent   : Directory_Entries.Directory_Entry);
+   overriding function Get_Sort_Function (This : Full_Name_Column; Order : Gtk.Enums.Gtk_Sort_Type)
+                                         return Sort_Function;
 
 end File_Columns.Full_Name_Columns;
