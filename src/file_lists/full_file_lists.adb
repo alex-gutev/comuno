@@ -482,7 +482,7 @@ package body Full_File_Lists is
       if Data.Marked_Set.Is_Empty then
          if Data.Selection /= Gtk.Tree_Model.Null_Iter then
             declare
-               Ent : File_Model_Columns.Entry_Pointers.Reference_Type :=
+               Ent : File_Model_Columns.Entry_Ref :=
                  File_Model_Columns.Get_Entry(Data.List.Get, Data.Selection);
 
             begin
@@ -493,7 +493,7 @@ package body Full_File_Lists is
       else
          for Row of Data.Marked_Set loop
             declare
-               Ent : File_Model_Columns.Entry_Pointers.Reference_Type :=
+               Ent : File_Model_Columns.Entry_Ref :=
                  File_Model_Columns.Get_Entry(Data.List.Get, Row);
 
             begin

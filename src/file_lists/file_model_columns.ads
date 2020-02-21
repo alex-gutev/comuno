@@ -73,12 +73,12 @@ package File_Model_Columns is
    function Get (Ref : in Model_Ref) return List_Store;
 
    --
-   -- Reference Counted Directory_Entry Pointer
+   -- Entry_Ref
    --
-   package Entry_Pointers is new Gnatcoll.Refcount.Shared_Pointers
-     (Directory_Entries.Directory_Entry);
-
-   subtype Entry_Ref is Entry_Pointers.Reference_Type;
+   --  Reference to a row's directory entry.
+   --
+   type Entry_Ref (Ent : not null access Directory_Entries.Directory_Entry) is limited private
+   with Implicit_Dereference => Ent;
 
 
    -- List Store Model Columns --
@@ -113,6 +113,45 @@ package File_Model_Columns is
                        Row   : Row_Iter)
                       return Entry_Ref;
 
+   -- Fields --
+
+   --
+   -- The following functions are used to retrieve formatted string
+   -- values which are displayed to the user in columns.
+   --
+
+   --
+   -- Has_Field
+   --
+   --  Check whether the row has a cached formatted string value for
+   --  the column at Index.
+   --
+   function Has_Field (Model : Gtk.Tree_Model.Gtk_Tree_Model;
+                       Row : Row_Iter;
+                       Index : Glib.gint)
+                      return Boolean;
+
+   --
+   -- Get_Field
+   --
+   --  Retrieve the formatted string value for the column Index of a
+   --  given row.
+   --
+   function Get_Field (Model : Gtk.Tree_Model.Gtk_Tree_Model;
+                       Row : Row_Iter;
+                       Index : Glib.gint)
+                      return String;
+
+   --
+   -- Set_Field
+   --
+   --  Set the formatted string value for column Index of a given row.
+   --
+   procedure Set_Field (Model : Gtk.Tree_Model.Gtk_Tree_Model;
+                        Row : Row_Iter;
+                        Index : Glib.Gint;
+                        Value : String);
+
 
    -- Marked State --
 
@@ -133,6 +172,8 @@ package File_Model_Columns is
 private
 
    Column_Start : constant Glib.Gint := 2;
+
+   type Entry_Ref (Ent : not null access Directory_Entries.Directory_Entry) is null record;
 
    type Model_Ref is new Ada.Finalization.Controlled with record
       Model : List_Store;

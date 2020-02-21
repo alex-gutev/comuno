@@ -24,22 +24,17 @@ package body File_Columns.Data_Functions is
       Row    :                 Gtk.Tree_Model.Gtk_Tree_Iter;
       Index  :                 Glib.Gint) is
 
-      List_Store : Gtk.List_Store.Gtk_List_Store :=
-        Gtk.List_Store."-"(Model);
-
       Ent : Directory_Entries.Directory_Entry :=
         File_Model_Columns.Get_Entry(Model, Row);
 
-      Value : String := Gtk.Tree_Model.Get_String(Model, Row, Index);
-
    begin
 
-      if Value'Length = 0 then
+      if not File_Model_Columns.Has_Field(Model, Row, Index) then
          declare
             Formatted : String := Format(Ent);
 
          begin
-            List_Store.Set(Row, Index, Formatted);
+            File_Model_Columns.Set_Field(Model, Row, Index, Formatted);
 
             Glib.Properties.Set_Property
               (Cell,
@@ -51,7 +46,7 @@ package body File_Columns.Data_Functions is
          Glib.Properties.Set_Property
            (Cell,
             Gtk.Cell_Renderer_Text.Text_Property,
-            Value);
+            File_Model_Columns.Get_Field(Model, Row, Index));
 
       end if;
 

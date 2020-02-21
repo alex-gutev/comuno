@@ -10,6 +10,8 @@
 pragma License (GPL);
 
 with Ada.Unchecked_Deallocation;
+with Ada.Containers;
+with Ada.Containers.Indefinite_Hashed_Maps;
 with System.Address_To_Access_Conversions;
 
 with Glib.Values;
@@ -28,7 +30,33 @@ package body File_Model_Columns is
    Column_Marked : constant Glib.Gint := 1;
 
 
+   function Hash (Int : Glib.Gint) return Ada.Containers.Hash_Type is
+     (Ada.Containers.Hash_Type(Int));
+
+   package Field_Maps is new Ada.Containers.Indefinite_Hashed_Maps
+     (Key_Type => Glib.Gint,
+      Element_Type => String,
+      Hash => Hash,
+      Equivalent_Keys => Glib."=");
+
+
+   --
+   -- Entry_Data
+   --
+   --  Data associated with a tree model row.
+   --
+   --  Stores the directory entry and a map storing cached formatted
+   --  strings, which are displayed to the user.
+   --
+   type Entry_Data is record
+      Dir_Entry : aliased Directory_Entries.Directory_Entry; -- Directory Entry
+      Fields    : Field_Maps.Map;                            -- Cached column formatted strings
+   end record;
+
+
    -- Packages --
+
+   package Entry_Pointers is new Gnatcoll.Refcount.Shared_Pointers (Entry_Data);
 
    package Conversions is new System.Address_To_Access_Conversions
      (Entry_Pointers.Ref);
@@ -127,10 +155,11 @@ package body File_Model_Columns is
    --  pointer to it.
    --
    procedure Box_Entry (Dir_Entry : in Directory_Entries.Directory_Entry; Value : in out Glib.Values.Gvalue) is
+      Box : Entry_Data := (Dir_Entry => Dir_Entry, others => <>);
       Ref : Entry_Pointers.Ref;
 
    begin
-      Ref.Set(Dir_Entry);
+      Ref.Set(Box);
 
       Glib.Values.Init(Value, Entry_Type);
       Glib.Values.Set_Boxed(Value, Ref'Address);
@@ -159,27 +188,84 @@ package body File_Model_Columns is
 
    -- Getting Row Values --
 
-   function Get_Entry (Model : Tree_Model;
-                       Row   : Row_Iter)
-                      return Entry_Ref is
+   --
+   -- Get_Entry_Data
+   --
+   --  Retrieve the Entry_Data record associated with a given row.
+   --
+   function Get_Entry_Data (Model : Gtk.Tree_Model.Gtk_Tree_Model;
+                           Row : Row_Iter)
+                          return Entry_Pointers.Reference_Type is
 
       Value : Glib.Values.Gvalue;
       Ref   : Entry_Pointers.Ref;
 
    begin
-      Model.Get_Value(Row, Column_Entry, Value);
+      Gtk.Tree_Model.Get_Value(Model, Row, Column_Entry, Value);
       Ref := Conversions.To_Pointer(Glib.Values.Get_Boxed(Value)).all;
 
       Glib.Values.Unset(Value);
 
       return Ref.Get;
+   end Get_Entry_Data;
+
+
+   function Get_Entry (Model : Tree_Model;
+                       Row   : Row_Iter)
+                      return Entry_Ref is
+
+      Ref   : Entry_Pointers.Reference_Type :=
+        Get_Entry_Data(Gtk.List_Store."+"(Model), Row);
+
+   begin
+      return (Ent => Ref.Element.Dir_Entry'Access);
 
    end Get_Entry;
 
    function Get_Entry (Model : Gtk.Tree_Model.Gtk_Tree_Model;
                        Row : Row_Iter)
                       return Entry_Ref is
-      (Get_Entry(-Model, Row));
+     (Get_Entry(-Model, Row));
+
+
+   -- Formatted Column Strings --
+
+   function Has_Field (Model : Gtk.Tree_Model.Gtk_Tree_Model;
+                       Row : Row_Iter;
+                       Index : Glib.gint)
+                      return Boolean is
+      Ref : Entry_Pointers.Reference_Type :=
+        Get_Entry_Data(Model, Row);
+
+   begin
+      return Field_Maps.Has_Element(Ref.Fields.Find(Index));
+
+   end Has_Field;
+
+
+   function Get_Field (Model : Gtk.Tree_Model.Gtk_Tree_Model;
+                       Row : Row_Iter;
+                       Index : Glib.gint)
+                      return String is
+      Ref : Entry_Pointers.Reference_Type :=
+        Get_Entry_Data(Model, Row);
+
+   begin
+      return Ref.Fields.Element(Index);
+
+   end Get_Field;
+
+
+   procedure Set_Field (Model : Gtk.Tree_Model.Gtk_Tree_Model;
+                        Row : Row_Iter;
+                        Index : Glib.Gint;
+                        Value : String) is
+      Ref : Entry_Pointers.Reference_Type := Get_Entry_Data(Model, Row);
+
+   begin
+      Ref.Fields.Insert(Index, Value);
+   end Set_Field;
+
 
 
    -- Marking --
