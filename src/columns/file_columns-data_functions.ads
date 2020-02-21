@@ -35,18 +35,13 @@ package File_Columns.Data_Functions is
    --
    --  Cell data function which formats the displayed string, using
    --  the Format function, only the first time it is called, and
-   --  stores the formatted string at column 'Index' within the tree
-   --  view model.
+   --  stores the formatted string at field 'Index' of the row's entry
+   --  data.
    --
    --  This function assumes the following:
    --
    --   - The cell is GTK Cell Renderer Text to display a string
    --     value.
-   --
-   --   - The model is a GTK List Store.
-   --
-   --   - The model contains a column of type string at Index,
-   --     reserved for this column
    --
    generic
       --

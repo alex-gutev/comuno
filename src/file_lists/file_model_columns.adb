@@ -9,12 +9,11 @@
 
 pragma License (GPL);
 
-with Ada.Unchecked_Deallocation;
-with System.Address_To_Access_Conversions;
-
-with Glib.Values;
+with Ada.Containers;
+with Ada.Strings.Unbounded;
 
 with File_Columns;
+with Boxed_Refcounted;
 
 package body File_Model_Columns is
 
@@ -28,13 +27,27 @@ package body File_Model_Columns is
    Column_Marked : constant Glib.Gint := 1;
 
 
+   --
+   -- Cached_String
+   --
+   --  Stores a formatted string which is displayed to the user in a
+   --  column.
+   --
+   type Cached_String is record
+      Is_Set : Boolean;                                -- Flag if the value is set
+      Value  : Ada.Strings.Unbounded.Unbounded_String; -- Formatted String Value
+   end record;
+
+
    -- Packages --
 
-   package Conversions is new System.Address_To_Access_Conversions
-     (Entry_Pointers.Ref);
+   package Boxed_Entry is new Boxed_Refcounted
+     (Directory_Entries.Directory_Entry,
+      "Directory_Entry");
 
-   procedure Free is new Ada.Unchecked_Deallocation
-     (Entry_Pointers.Ref, Conversions.Object_Pointer);
+   package Boxed_Cached_String is new Boxed_Refcounted
+     (Cached_String,
+      "Cached_Formatted_String");
 
 
    -- List Store Model Reference --
@@ -64,78 +77,19 @@ package body File_Model_Columns is
 
    -- Column Types --
 
-   --
-   -- Boxed Directory_Entry Type
-   --
-   Entry_Type : Glib.Gtype;
-
    function Column_Types return Glib.Gtype_Array is
       Col_Types : Glib.Gtype_Array := File_Columns.Column_Types;
       Types     : Glib.Gtype_Array (0 .. Glib.Guint(Column_Start) + Col_Types'Last);
 
    begin
-      Types(Glib.Guint(Column_Entry))  := Entry_Type;
+      Types(Glib.Guint(Column_Entry))  := Boxed_Entry.Boxed_Type;
       Types(Glib.Guint(Column_Marked)) := Glib.Gtype_Boolean;
 
-      Types(Glib.Guint(Column_Start) .. Types'Last) := Col_Types;
+      Types(Glib.Guint(Column_Start) .. Types'Last) :=
+        (others => Boxed_Cached_String.Boxed_Type);
 
       return Types;
    end Column_Types;
-
-
-   -- Boxed Entry Type --
-
-   --
-   -- Copy_Entry
-   --
-   --  Copy a boxed shared pointer to a Directory_Entry.
-   --
-   function Copy_Entry (Src : System.Address) return System.Address;
-   pragma Convention (C, Copy_Entry);
-
-   function Copy_Entry (Src : System.Address) return System.Address is
-      Dest_Ref : Conversions.Object_Pointer := new Entry_Pointers.Ref;
-      Src_Ref  : Conversions.Object_Pointer := Conversions.To_Pointer(Src);
-
-   begin
-      Dest_Ref.all := Src_Ref.all;
-      return Conversions.To_Address(Dest_Ref);
-
-   end Copy_Entry;
-
-   --
-   -- Free_Entry
-   --
-   --  Release a shared pointer to a Directory_Entry, thus
-   --  decrementing the reference count.
-   --
-   procedure Free_Entry (Ptr : System.Address);
-   pragma Convention (C, Free_Entry);
-
-   procedure Free_Entry (Ptr : System.Address) is
-      Ref : Conversions.Object_Pointer :=
-        Conversions.To_Pointer(Ptr);
-
-   begin
-      Free(Ref);
-   end Free_Entry;
-
-   --
-   -- Box_Entry
-   --
-   --  Copy a Directory_Entry to the heap and create a boxed shared
-   --  pointer to it.
-   --
-   procedure Box_Entry (Dir_Entry : in Directory_Entries.Directory_Entry; Value : in out Glib.Values.Gvalue) is
-      Ref : Entry_Pointers.Ref;
-
-   begin
-      Ref.Set(Dir_Entry);
-
-      Glib.Values.Init(Value, Entry_Type);
-      Glib.Values.Set_Boxed(Value, Ref'Address);
-
-   end Box_Entry;
 
 
    -- Setting Row Values --
@@ -144,15 +98,29 @@ package body File_Model_Columns is
                          Row       : in Gtk.Tree_Model.Gtk_Tree_Iter;
                          Dir_Entry : in Directory_Entries.Directory_Entry) is
 
+      use type Glib.Gint;
+
       Value : Glib.Values.Gvalue;
 
    begin
-      Box_Entry(Dir_Entry, Value);
+      Boxed_Entry.Box(Dir_Entry, Value);
 
       Model.Set_Value(Row, Column_Entry, Value);
       Model.Set(Row, Column_Marked, False);
 
       Glib.Values.Unset(Value);
+
+      for I in 0 .. File_Columns.Num_Columns - 1 loop
+         declare
+            Value : Glib.Values.Gvalue;
+
+         begin
+            Boxed_Cached_String.Box((Is_Set => False, others => <>), Value);
+
+            Model.Set_Value(Row, Column_Start + Glib.Gint(I), Value);
+            Glib.Values.Unset(Value);
+         end;
+      end loop;
 
    end Set_Values;
 
@@ -163,23 +131,60 @@ package body File_Model_Columns is
                        Row   : Row_Iter)
                       return Entry_Ref is
 
-      Value : Glib.Values.Gvalue;
-      Ref   : Entry_Pointers.Ref;
-
-   begin
-      Model.Get_Value(Row, Column_Entry, Value);
-      Ref := Conversions.To_Pointer(Glib.Values.Get_Boxed(Value)).all;
-
-      Glib.Values.Unset(Value);
-
-      return Ref.Get;
-
-   end Get_Entry;
+     (Get_Entry(Gtk.List_Store."+"(Model), Row));
 
    function Get_Entry (Model : Gtk.Tree_Model.Gtk_Tree_Model;
                        Row : Row_Iter)
                       return Entry_Ref is
-      (Get_Entry(-Model, Row));
+
+     (Ent => Boxed_Entry.Get_Data(Model, Row, Column_Entry).Element);
+
+
+
+   -- Formatted Column Strings --
+
+   function Has_Field (Model : Gtk.Tree_Model.Gtk_Tree_Model;
+                       Row   : Row_Iter;
+                       Index : Glib.gint)
+                      return Boolean is
+
+      Ref : Boxed_Cached_String.Reference :=
+        Boxed_Cached_String.Get_Data(Model, Row, Index);
+
+   begin
+      return Ref.Is_Set;
+
+   end Has_Field;
+
+
+   function Get_Field (Model : Gtk.Tree_Model.Gtk_Tree_Model;
+                       Row   : Row_Iter;
+                       Index : Glib.gint)
+                      return String is
+
+      Ref : Boxed_Cached_String.Reference :=
+        Boxed_Cached_String.Get_Data(Model, Row, Index);
+
+      pragma Assert (Ref.Is_Set);
+   begin
+      return Ada.Strings.Unbounded.To_String(Ref.Value);
+
+   end Get_Field;
+
+
+   procedure Set_Field (Model : Gtk.Tree_Model.Gtk_Tree_Model;
+                        Row   : Row_Iter;
+                        Index : Glib.Gint;
+                        Value : String) is
+
+      Ref : Boxed_Cached_String.Reference :=
+        Boxed_Cached_String.Get_Data(Model, Row, Index);
+
+   begin
+      Ref.Is_Set := True;
+      Ref.Value := Ada.Strings.Unbounded.To_Unbounded_String(Value);
+   end Set_Field;
+
 
 
    -- Marking --
@@ -194,13 +199,5 @@ package body File_Model_Columns is
    begin
       Model.Set(Row, Column_Marked, Marked);
    end Set_Marked;
-
-
-begin
-
-   -- Initialize boxed Directory_Entry GType --
-
-   Entry_Type := Glib.Boxed_Type_Register_Static
-     ("Directory_entry", Copy_Entry'Access, Free_Entry'Access);
 
 end File_Model_Columns;
