@@ -124,7 +124,7 @@ package File_Model_Columns is
    --  the column at Index.
    --
    function Has_Field (Model : Gtk.Tree_Model.Gtk_Tree_Model;
-                       Row : Row_Iter;
+                       Row   : Row_Iter;
                        Index : Glib.gint)
                       return Boolean;
 
@@ -135,7 +135,7 @@ package File_Model_Columns is
    --  given row.
    --
    function Get_Field (Model : Gtk.Tree_Model.Gtk_Tree_Model;
-                       Row : Row_Iter;
+                       Row   : Row_Iter;
                        Index : Glib.gint)
                       return String;
 
@@ -145,7 +145,7 @@ package File_Model_Columns is
    --  Set the formatted string value for column Index of a given row.
    --
    procedure Set_Field (Model : Gtk.Tree_Model.Gtk_Tree_Model;
-                        Row : Row_Iter;
+                        Row   : Row_Iter;
                         Index : Glib.Gint;
                         Value : String);
 

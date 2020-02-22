@@ -144,7 +144,7 @@ package body File_Model_Columns is
    -- Formatted Column Strings --
 
    function Has_Field (Model : Gtk.Tree_Model.Gtk_Tree_Model;
-                       Row : Row_Iter;
+                       Row   : Row_Iter;
                        Index : Glib.gint)
                       return Boolean is
 
@@ -158,7 +158,7 @@ package body File_Model_Columns is
 
 
    function Get_Field (Model : Gtk.Tree_Model.Gtk_Tree_Model;
-                       Row : Row_Iter;
+                       Row   : Row_Iter;
                        Index : Glib.gint)
                       return String is
 
@@ -173,7 +173,7 @@ package body File_Model_Columns is
 
 
    procedure Set_Field (Model : Gtk.Tree_Model.Gtk_Tree_Model;
-                        Row : Row_Iter;
+                        Row   : Row_Iter;
                         Index : Glib.Gint;
                         Value : String) is
 

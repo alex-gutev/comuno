@@ -78,9 +78,9 @@ package Boxed_Refcounted is
    --  The column must be of type Boxed_Type.
    --
    function Get_Data (Model : Gtk.Tree_Model.Gtk_Tree_Model;
-                      Row : Gtk.Tree_Model.Gtk_Tree_Iter;
+                      Row   : Gtk.Tree_Model.Gtk_Tree_Iter;
                       Index : Glib.Gint)
-                     return Reference;
+                          return Reference;
 
 private
 

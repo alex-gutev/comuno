@@ -68,7 +68,7 @@ package body Boxed_Refcounted is
    end Get_Data;
 
    function Get_Data (Model : Gtk.Tree_Model.Gtk_Tree_Model;
-                      Row : Gtk.Tree_Model.Gtk_Tree_Iter;
+                      Row   : Gtk.Tree_Model.Gtk_Tree_Iter;
                       Index : Glib.Gint)
                      return Reference is
       Value : Glib.Values.Gvalue;
