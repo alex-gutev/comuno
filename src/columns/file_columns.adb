@@ -19,6 +19,7 @@ with File_Columns.Name_Columns;
 with File_Columns.Full_Name_Columns;
 with File_Columns.Extension_Columns;
 with File_Columns.Size_Columns;
+with File_Columns.Modified_Date_Columns;
 
 package body File_Columns is
 
@@ -133,5 +134,6 @@ begin
    Add_Column("full-name", Full_Name_Columns.Full_Name_Column'(Column with others => <>));
    Add_Column("extension", Extension_Columns.Extension_Column'(Column with others => <>));
    Add_Column("size", Size_Columns.Size_Column'(Column with others => <>));
+   Add_Column("modified-date", Modified_Date_Columns.Modified_Date_Column'(Column with others => <>));
 
 end File_Columns;
