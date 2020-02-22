@@ -198,11 +198,13 @@ package body File_List_Views is
       Name : File_Columns.Column_Ptr := File_Columns.Get_Column("name");
       Size : File_Columns.Column_Ptr := File_Columns.Get_Column("size");
       Ext  : File_Columns.Column_Ptr := File_Columns.Get_Column("extension");
+      Date : File_Columns.Column_Ptr := File_Columns.Get_Column("modified-date");
 
    begin
       File_Columns.Append_Column(View, Name.Create);
       File_Columns.Append_Column(View, Ext.Create);
       File_Columns.Append_Column(View, Size.Create);
+      File_Columns.Append_Column(View, Date.Create);
    end Init_Columns;
 
 
