@@ -11,11 +11,8 @@ pragma License (GPL);
 
 with Ada.Finalization;
 
-with Gnatcoll.Refcount;
-
 with Glib;
 with Glib.Values;
-with Glib.Types;
 
 with Gtk.Tree_Model;
 with Gtk.List_Store;
