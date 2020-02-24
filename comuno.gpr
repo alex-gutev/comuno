@@ -19,6 +19,10 @@ project Comuno is
    for Languages use ("Ada", "C");
    for Source_Dirs use ("src/**");
 
+   package Linker is
+      for Required_Switches use ("-lresources.o");
+   end Linker;
+
    for Object_Dir use "obj";
    for Exec_Dir use ".";
    for Main use ("comuno.adb");
