@@ -65,7 +65,7 @@ package body File_Columns.Name_Columns is
    -- Column Type --
 
    function Column_Type (Col : Name_Column) return Glib.Gtype is
-      (Glib.Gtype_String);
+      (File_Model_Columns.Cached_String_Type);
 
 
    -- Sorting --
@@ -97,5 +97,13 @@ package body File_Columns.Name_Columns is
    function Format_Name (Ent : Directory_Entries.Directory_Entry) return String is
      (Directory_Entries.Subpath(Ent).Filename);
 
+
+   procedure Set_Data (This      : Name_Column;
+                       Model     : Gtk.List_Store.Gtk_List_Store;
+                       Row       : Gtk.Tree_Model.Gtk_Tree_Iter;
+                       Dir_Entry : Directory_Entries.Directory_Entry) is
+   begin
+      File_Model_Columns.Set_Cached_String(Model, Row, This.Get_Index);
+   end Set_Data;
 
 end File_Columns.Name_Columns;

@@ -37,4 +37,10 @@ package File_Columns.Name_Columns is
    overriding function Get_Sort_Function (This : Name_Column; Order : Gtk.Enums.Gtk_Sort_Type)
                                          return Sort_Function;
 
+   overriding procedure Set_Data (This      : Name_Column;
+                                  Model     : Gtk.List_Store.Gtk_List_Store;
+                                  Row       : Gtk.Tree_Model.Gtk_Tree_Iter;
+                                  Dir_Entry : Directory_Entries.Directory_Entry);
+
+
 end File_Columns.Name_Columns;

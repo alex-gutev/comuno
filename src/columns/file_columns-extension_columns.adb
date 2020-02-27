@@ -66,7 +66,7 @@ package body File_Columns.Extension_Columns is
    -- Column Type --
 
    function Column_Type (Col : Extension_Column) return Glib.Gtype is
-     (Glib.Gtype_String);
+     (File_Model_Columns.Cached_String_Type);
 
 
    -- Sorting --
@@ -106,6 +106,15 @@ package body File_Columns.Extension_Columns is
    -- Data Function --
 
    function Format_Extension (Ent : Directory_Entries.Directory_Entry) return String is
-      (Directory_Entries.Subpath(Ent).Extension);
+     (Directory_Entries.Subpath(Ent).Extension);
+
+
+   procedure Set_Data (This      : Extension_Column;
+                       Model     : Gtk.List_Store.Gtk_List_Store;
+                       Row       : Gtk.Tree_Model.Gtk_Tree_Iter;
+                       Dir_Entry : Directory_Entries.Directory_Entry) is
+   begin
+      File_Model_Columns.Set_Cached_String(Model, Row, This.Get_Index);
+   end Set_Data;
 
 end File_Columns.Extension_Columns;

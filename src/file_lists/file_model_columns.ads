@@ -110,7 +110,31 @@ package File_Model_Columns is
                        Row   : Row_Iter)
                       return Entry_Ref;
 
-   -- Fields --
+
+   -- Cached Formatted String Values --
+
+   --
+   -- Cached_String_Type
+   --
+   --  Return the Glib Type which stores a cached formatted string.
+   --
+   --  This type allows a formatted string, created in a row data
+   --  function, to be stored inside a tree model such that future
+   --  invocations of the data function may retrieve the cached string
+   --  rather than recreating a formatted string.
+   --
+   function Cached_String_Type return Glib.Gtype;
+
+   --
+   -- Set_Cached_String
+   --
+   --  Set the column value, of a given row, in a list store tree
+   --  model to an empty cached formatted string.
+   --
+   procedure Set_Cached_String (Model : List_Store;
+                                Row   : Row_Iter;
+                                Index : Glib.Gint);
+
 
    --
    -- The following functions are used to retrieve formatted string

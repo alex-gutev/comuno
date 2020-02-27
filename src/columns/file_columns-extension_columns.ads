@@ -25,11 +25,16 @@ package File_Columns.Extension_Columns is
 
    -- Operations --
 
-   function Column_Type (Col : Extension_Column) return Glib.Gtype;
+   overriding function Column_Type (Col : Extension_Column) return Glib.Gtype;
 
-   function Create (This : Extension_Column) return Tree_View_Column;
+   overriding function Create (This : Extension_Column) return Tree_View_Column;
 
-   function Get_Sort_Function (This : Extension_Column; Order : Gtk.Enums.Gtk_Sort_Type)
+   overriding function Get_Sort_Function (This : Extension_Column; Order : Gtk.Enums.Gtk_Sort_Type)
                               return Sort_Function;
+
+   overriding procedure Set_Data (This      : Extension_Column;
+                                  Model     : Gtk.List_Store.Gtk_List_Store;
+                                  Row       : Gtk.Tree_Model.Gtk_Tree_Iter;
+                                  Dir_Entry : Directory_Entries.Directory_Entry);
 
 end File_Columns.Extension_Columns;

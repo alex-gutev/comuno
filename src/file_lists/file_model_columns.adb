@@ -49,6 +49,9 @@ package body File_Model_Columns is
      (Cached_String,
       "Cached_Formatted_String");
 
+   function Cached_String_Type return Glib.Gtype is
+     (Boxed_Cached_String.Boxed_Type);
+
 
    -- List Store Model Reference --
 
@@ -85,8 +88,7 @@ package body File_Model_Columns is
       Types(Glib.Guint(Column_Entry))  := Boxed_Entry.Boxed_Type;
       Types(Glib.Guint(Column_Marked)) := Glib.Gtype_Boolean;
 
-      Types(Glib.Guint(Column_Start) .. Types'Last) :=
-        (others => Boxed_Cached_String.Boxed_Type);
+      Types(Glib.Guint(Column_Start) .. Types'Last) := Col_Types;
 
       return Types;
    end Column_Types;
@@ -110,16 +112,8 @@ package body File_Model_Columns is
 
       Glib.Values.Unset(Value);
 
-      for I in 0 .. File_Columns.Num_Columns - 1 loop
-         declare
-            Value : Glib.Values.Gvalue;
-
-         begin
-            Boxed_Cached_String.Box((Is_Set => False, others => <>), Value);
-
-            Model.Set_Value(Row, Column_Start + Glib.Gint(I), Value);
-            Glib.Values.Unset(Value);
-         end;
+      for Column of File_Columns.All_Columns loop
+         Column.Set_Data(Model, Row, Dir_Entry);
       end loop;
 
    end Set_Values;
@@ -142,6 +136,22 @@ package body File_Model_Columns is
 
 
    -- Formatted Column Strings --
+
+   procedure Set_Cached_String (Model : List_Store;
+                                Row   : Row_Iter;
+                                Index : Glib.Gint) is
+
+      Value : Glib.Values.Gvalue;
+
+   begin
+      Boxed_Cached_String.Box((Is_Set => False, others => <>), Value);
+
+      Model.Set_Value(Row, Index, Value);
+      Glib.Values.Unset(Value);
+
+   end Set_Cached_String;
+
+
 
    function Has_Field (Model : Gtk.Tree_Model.Gtk_Tree_Model;
                        Row   : Row_Iter;

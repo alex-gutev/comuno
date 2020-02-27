@@ -69,7 +69,7 @@ package body File_Columns.Modified_Date_Columns is
    -- Column Type --
 
    function Column_Type (Col : Modified_Date_Column) return Glib.Gtype is
-     (Glib.Gtype_String);
+     (File_Model_Columns.Cached_String_Type);
 
 
    -- Sorting --
@@ -128,5 +128,14 @@ package body File_Columns.Modified_Date_Columns is
       return  Format_Day(Day, 2) & "/" & Format_Month(Month, 2) & "/" & Format_Year(Year, 4);
 
    end Format_Date;
+
+
+   procedure Set_Data (This      : Modified_Date_Column;
+                       Model     : Gtk.List_Store.Gtk_List_Store;
+                       Row       : Gtk.Tree_Model.Gtk_Tree_Iter;
+                       Dir_Entry : Directory_Entries.Directory_Entry) is
+   begin
+      File_Model_Columns.Set_Cached_String(Model, Row, This.Get_Index);
+   end Set_Data;
 
 end File_Columns.Modified_Date_Columns;

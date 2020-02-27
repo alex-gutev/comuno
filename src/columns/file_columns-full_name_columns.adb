@@ -13,6 +13,7 @@ with Glib;
 with Glib.Properties;
 with Gtk.Cell_Renderer_Text;
 
+with File_Model_Columns;
 with Sort_Functions;
 
 with File_Columns.Data_Functions;
@@ -64,7 +65,7 @@ package body File_Columns.Full_Name_Columns is
    -- Column Type --
 
    function Column_Type (Col : Full_Name_Column) return Glib.Gtype is
-      (Glib.Gtype_String);
+      (File_Model_Columns.Cached_String_Type);
 
 
    -- Sorting --
@@ -94,7 +95,14 @@ package body File_Columns.Full_Name_Columns is
    -- Data Function --
 
    function Format_Name (Ent : Directory_Entries.Directory_Entry) return String is
-      (Directory_Entries.Subpath(Ent).Basename);
+     (Directory_Entries.Subpath(Ent).Basename);
 
+   procedure Set_Data (This      : Full_Name_Column;
+                       Model     : Gtk.List_Store.Gtk_List_Store;
+                       Row       : Gtk.Tree_Model.Gtk_Tree_Iter;
+                       Dir_Entry : Directory_Entries.Directory_Entry) is
+   begin
+      File_Model_Columns.Set_Cached_String(Model, Row, This.Get_Index);
+   end Set_Data;
 
 end File_Columns.Full_Name_Columns;
