@@ -15,6 +15,7 @@ with Ada.Strings.Hash;
 
 with File_Model_Columns;
 
+with File_Columns.Icon_Columns;
 with File_Columns.Name_Columns;
 with File_Columns.Full_Name_Columns;
 with File_Columns.Extension_Columns;
@@ -130,6 +131,7 @@ begin
 
    -- Add Builtin Columns --
 
+   Add_Column("icon", Icon_Columns.Icon_Column'(Column with others => <>));
    Add_Column("name", Name_Columns.Name_Column'(Column with others => <>));
    Add_Column("full-name", Full_Name_Columns.Full_Name_Column'(Column with others => <>));
    Add_Column("extension", Extension_Columns.Extension_Column'(Column with others => <>));

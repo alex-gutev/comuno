@@ -195,12 +195,14 @@ package body File_List_Views is
    end Init_List_View;
 
    procedure Init_Columns (View : Gtk_Tree_View) is
+      Icon : File_Columns.Column_Ptr := File_Columns.Get_Column("icon");
       Name : File_Columns.Column_Ptr := File_Columns.Get_Column("name");
       Size : File_Columns.Column_Ptr := File_Columns.Get_Column("size");
       Ext  : File_Columns.Column_Ptr := File_Columns.Get_Column("extension");
       Date : File_Columns.Column_Ptr := File_Columns.Get_Column("modified-date");
 
    begin
+      File_Columns.Append_Column(View, Icon.Create);
       File_Columns.Append_Column(View, Name.Create);
       File_Columns.Append_Column(View, Ext.Create);
       File_Columns.Append_Column(View, Size.Create);

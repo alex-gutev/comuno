@@ -205,12 +205,21 @@ package body Full_File_Lists is
    --  Sets the sort function of each column.
    --
    procedure Init_List_Store (Model : Gtk.List_Store.Gtk_List_Store) is
+      use type File_Columns.Sort_Function;
+
    begin
       for Column of File_Columns.All_Columns loop
-         Model.Set_Sort_Func
-           (Column.Get_Index + File_Model_Columns.Column_Start,
-            Gtk.List_Store.Gtk_Tree_Iter_Compare_Func
-              (Column.Get_Sort_Function(Gtk.Enums.Sort_Ascending)));
+         declare
+            Func : File_Columns.Sort_Function :=
+              Column.Get_Sort_Function(Gtk.Enums.Sort_Ascending);
+
+         begin
+            if Func /= null then
+               Model.Set_Sort_Func
+                 (Column.Get_Index + File_Model_Columns.Column_Start,
+                  Gtk.List_Store.Gtk_Tree_Iter_Compare_Func(Func));
+            end if;
+         end;
       end loop;
    end Init_List_Store;
 
