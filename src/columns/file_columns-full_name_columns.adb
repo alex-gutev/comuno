@@ -13,10 +13,13 @@ with Glib;
 with Glib.Properties;
 with Gtk.Cell_Renderer_Text;
 
+with Pango.Layout;
+
 with File_Model_Columns;
 with Sort_Functions;
 
 with File_Columns.Data_Functions;
+with File_Columns.Util;
 
 package body File_Columns.Full_Name_Columns is
    use type Gtk.Enums.Gtk_Sort_Type;
@@ -37,14 +40,10 @@ package body File_Columns.Full_Name_Columns is
    -- Column Creation --
 
    function Create (This : Full_Name_Column) return Tree_View_Column is
-      Col : Tree_View_Column;
+      Col : Tree_View_Column := Util.Create_Column("Name");
       Cell : Cell_Renderer_Text;
 
    begin
-      -- Make Column --
-      Gtk.Tree_View_Column.Gtk_New(Col);
-      Col.Set_Title("Name");
-
       -- Make Cell Renderer --
       Gtk.Cell_Renderer_Text.Gtk_New(Cell);
 
@@ -54,8 +53,13 @@ package body File_Columns.Full_Name_Columns is
       -- Set Cell Data Function --
       Set_Data_Func.Set_Cell_Data_Func(Col, Cell, Data_Function'Access, This.Get_Index);
 
+
+      -- Set Properties
+
       Col.Set_Expand(True);
       Col.Set_Sort_Column_Id(This.Index);
+
+      Util.Set_Ellipsize_Mode(Cell, Pango.Layout.Ellipsize_End);
 
       return Col;
 

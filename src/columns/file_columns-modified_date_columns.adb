@@ -21,6 +21,7 @@ with Sort_Functions;
 with File_Model_Columns;
 
 with File_Columns.Data_Functions;
+with File_Columns.Util;
 
 package body File_Columns.Modified_Date_Columns is
    use type Gtk.Enums.Gtk_Sort_Type;
@@ -41,14 +42,10 @@ package body File_Columns.Modified_Date_Columns is
    -- Column Creation --
 
    function Create (This : Modified_Date_Column) return Tree_View_Column is
-      Col  : Tree_View_Column;
+      Col  : Tree_View_Column := Util.Create_Column("Date Modified");
       Cell : Cell_Renderer_Text;
 
    begin
-      -- Make Column --
-      Gtk.Tree_View_Column.Gtk_New(Col);
-      Col.Set_Title("Date Modified");
-
       -- Make Cell Renderer --
       Gtk.Cell_Renderer_Text.Gtk_New(Cell);
 

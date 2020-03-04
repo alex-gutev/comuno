@@ -13,10 +13,13 @@ with Glib;
 with Glib.Properties;
 with Gtk.Cell_Renderer_Text;
 
+with Pango.Layout;
+
 with Sort_Functions;
 with File_Model_Columns;
 
 with File_Columns.Data_Functions;
+with File_Columns.Util;
 
 package body File_Columns.Extension_Columns is
 
@@ -38,14 +41,10 @@ package body File_Columns.Extension_Columns is
    -- Column Creation --
 
    function Create (This : Extension_Column) return Tree_View_Column is
-      Col  : Tree_View_Column;
+      Col  : Tree_View_Column := Util.Create_Column("Ext");
       Cell : Cell_Renderer_Text;
 
    begin
-      -- Make Column --
-      Gtk.Tree_View_Column.Gtk_New(Col);
-      Col.Set_Title("Ext");
-
       -- Make Cell Renderer --
       Gtk.Cell_Renderer_Text.Gtk_New(Cell);
 
@@ -55,8 +54,13 @@ package body File_Columns.Extension_Columns is
       -- Set Cell Data Function --
       Set_Data_Func.Set_Cell_Data_Func(Col, Cell, Data_Function'Access, This.Get_Index);
 
+
+      -- Set Properties --
+
       Col.Set_Expand(False);
       Col.Set_Sort_Column_Id(This.Index);
+
+      Util.Set_Ellipsize_Mode(Cell, Pango.Layout.Ellipsize_End);
 
       return Col;
 
