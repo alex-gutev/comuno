@@ -10,6 +10,7 @@
 pragma License (GPL);
 
 with Ada.Calendar;
+with Gnat.Calendar.Time_Io;
 
 with Glib;
 with Glib.Properties;
@@ -105,24 +106,15 @@ package body File_Columns.Modified_Date_Columns is
 
    -- Formatting Size --
 
-   function Format_Year is new Formatting.Format_Int (Ada.Calendar.Year_Number);
-   function Format_Month is new Formatting.Format_Int (Ada.Calendar.Month_Number);
-   function Format_Day is new Formatting.Format_Int (Ada.Calendar.Day_Number);
-
    function Format_Date (Ent : Directory_Entries.Directory_Entry) return String is
       use Directory_Entries;
-      use type File_System.Size_Type;
 
-      package Calendar renames Ada.Calendar;
+      package Cal renames Gnat.Calendar.Time_Io;
 
-      Time  : Calendar.Time         := Attributes(Ent).Modification_Time;
-
-      Year  : Calendar.Year_Number  := Calendar.Year(Time);
-      Month : Calendar.Month_Number := Calendar.Month(Time);
-      Day   : Calendar.Day_Number   := Calendar.Day(Time);
+      Time : Ada.Calendar.Time := Attributes(Ent).Modification_Time;
 
    begin
-      return  Format_Day(Day, 2) & "/" & Format_Month(Month, 2) & "/" & Format_Year(Year, 4);
+      return Gnat.Calendar.Time_Io.Image(Time, "%d/%m/%Y %H:%M");
 
    end Format_Date;
 
