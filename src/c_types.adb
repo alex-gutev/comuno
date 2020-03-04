@@ -9,11 +9,14 @@
 
 pragma License (GPL);
 
+with Ada.Calendar.Formatting;
+
 package body C_Types is
    use type Ada.Calendar.Time;
    function To_Ada_Time (Seconds : Timestamp) return Ada.Calendar.Time is
    begin
-      return Ada.Calendar.Time_Of(Year => 1970, Month => 1, Day => 1) +
+      return Ada.Calendar.Formatting.Time_Of
+        (Year => 1970, Month => 1, Day => 1, Time_Zone => 0) +
         Duration(Seconds);
    end To_Ada_Time;
 
