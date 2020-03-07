@@ -15,6 +15,7 @@ with Gtk.Builder;
 with Gtk.Adjustment;
 with Gtk.Tree_View_Column;
 with Gtk.Tree_Selection;
+with Gtk.Accel_Group;
 
 with Gdk.Event;
 with Gdk.Types;
@@ -26,6 +27,7 @@ with File_Columns;
 package body File_List_Views is
 
    use type Gtk.Tree_Model.Gtk_Tree_Iter;
+   use type Gdk.Types.Gdk_Modifier_Type;
 
    -- Gtk Widget Subtypes --
 
@@ -101,6 +103,14 @@ package body File_List_Views is
    procedure On_Path_Activate
      (View : access Gtk.Gentry.Gtk_Entry_Record'Class;
       This :        Controller);
+
+
+   --
+   -- Mark_Current_Row
+   --
+   --  Toggle the marked state of the currently selected row.
+   --
+   procedure Mark_Current_Row (This : Controller);
 
 
    --- Constructors ---
@@ -191,6 +201,7 @@ package body File_List_Views is
    begin
       Init_Columns(Data.List_View);
       Init_Scroll_Adjustments(This);
+      Init_List_View_Events(This);
 
    end Init_List_View;
 
@@ -565,7 +576,9 @@ package body File_List_Views is
             end;
 
          when Keys.Gdk_Up | Keys.Gdk_Down =>
-            null;
+            if (Event.Key.State and Gtk.Accel_Group.Get_Default_Mod_Mask) = Gdk.Types.Shift_Mask then
+               Mark_Current_Row(This);
+            end if;
 
          when Keys.Gdk_Home | Keys.Gdk_End =>
             null;
@@ -580,6 +593,20 @@ package body File_List_Views is
 
       return False;
    end On_Keypress;
+
+   procedure Mark_Current_Row (This : Controller) is
+      Data  : Controller_Ref := This.Get;
+      Dummy : Gtk.Tree_Model.Gtk_Tree_Model;
+      Row   : Gtk.Tree_Model.Gtk_Tree_Iter;
+
+   begin
+      Data.List_View.Get_Selection.Get_Selected(Dummy, Row);
+
+      if Row /= Gtk.Tree_Model.Null_Iter then
+         Data.File_List.Reference.Mark_Row(Row);
+      end if;
+
+   end Mark_Current_Row;
 
 
    procedure On_Path_Activate
