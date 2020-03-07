@@ -199,9 +199,9 @@ package body File_Model_Columns is
 
    -- Marking --
 
-   function Is_Marked (Model : in Tree_Model; Row : in Row_Iter) return Boolean is
+   function Is_Marked (Model : in Gtk.Tree_Model.Gtk_Tree_Model; Row : in Row_Iter) return Boolean is
    begin
-      return Model.Get_Boolean(Row, Column_Marked);
+      return Gtk.Tree_Model.Get_Boolean(Model, Row, Column_Marked);
    end Is_Marked;
 
 

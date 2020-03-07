@@ -12,10 +12,39 @@ pragma License (GPL);
 with Glib.Properties;
 with Gtk.Cell_Renderer_Text;
 with Gtk.List_Store;
+with Gdk.Rgba;
 
 with File_Model_Columns;
 
 package body File_Columns.Data_Functions is
+
+   --
+   -- Marked Row Color
+   --
+   Marked_Color : constant Gdk.Rgba.Gdk_Rgba :=
+     (Red   => 1.0,
+      Green => 0.0,
+      Blue  => 0.0,
+      Alpha => 1.0);
+
+   --
+   -- Non marked row color
+   --
+   Unmarked_Color : Gdk.Rgba.Gdk_Rgba := Gdk.Rgba.Black_Rgba;
+
+   --
+   -- Set_Text_Color
+   --
+   --  Set the text color attribute of a cell, based on whether the
+   --  row is marked or unmarked.
+   --
+   procedure Set_Text_Color
+     (Cell  : not null access Gtk.Cell_Renderer.Gtk_Cell_Renderer_Record'Class;
+      Model :                 Gtk.Tree_Model.Gtk_Tree_Model;
+      Row   :                 Gtk.Tree_Model.Gtk_Tree_Iter);
+
+
+   -- Data Function --
 
    procedure Memoized_Data_Function
      (Layout :                 Gtk.Cell_Layout.Gtk_Cell_Layout;
@@ -50,6 +79,23 @@ package body File_Columns.Data_Functions is
 
       end if;
 
+      Set_Text_Color(Cell, Model, Row);
+
    end Memoized_Data_Function;
+
+   procedure Set_Text_Color
+     (Cell  : not null access Gtk.Cell_Renderer.Gtk_Cell_Renderer_Record'Class;
+      Model :                 Gtk.Tree_Model.Gtk_Tree_Model;
+      Row   :                 Gtk.Tree_Model.Gtk_Tree_Iter) is
+
+   begin
+      Gdk.Rgba.Set_Property
+        (Cell,
+         Gtk.Cell_Renderer_Text.Foreground_Rgba_Property,
+         (if File_Model_Columns.Is_Marked(Model, Row) then
+             Marked_Color else
+             Unmarked_Color));
+
+   end Set_Text_Color;
 
 end File_Columns.Data_Functions;

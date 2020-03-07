@@ -534,7 +534,7 @@ package body Full_File_Lists is
 
    begin
       if Directory_Entries.Kind(Ent) /= File_System.Parent then
-         Mark := not File_Model_Columns.Is_Marked(List, Row);
+         Mark := not File_Model_Columns.Is_Marked(Gtk.List_Store."+"(List), Row);
 
          if Mark then
             Data.Marked_Set.Include(name, Row);

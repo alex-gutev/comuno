@@ -181,7 +181,7 @@ package File_Model_Columns is
    --
    --  Returns true if the row in the model is marked.
    --
-   function Is_Marked (Model : in Tree_Model; Row : in Row_Iter) return Boolean;
+   function Is_Marked (Model : in Gtk.Tree_Model.Gtk_Tree_Model; Row : in Row_Iter) return Boolean;
 
    --
    -- Set_Marked

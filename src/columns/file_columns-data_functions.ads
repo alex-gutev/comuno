@@ -43,6 +43,11 @@ package File_Columns.Data_Functions is
    --   - The cell is GTK Cell Renderer Text to display a string
    --     value.
    --
+   --  Notes:
+   --
+   --   This function also sets the text color of the cell based on
+   --   whether the row is marked or unmarked.
+   --
    generic
       --
       -- Function which should return a formatted string of the entry
