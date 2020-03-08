@@ -210,4 +210,17 @@ package body File_Model_Columns is
       Model.Set(Row, Column_Marked, Marked);
    end Set_Marked;
 
+
+   -- Utilities --
+
+   function Get_Row_Index (Model : in Gtk.Tree_Model.Gtk_Tree_Model; Row : in Row_Iter) return Glib.Gint is
+      Path  : Gtk.Tree_Model.Gtk_Tree_Path := Gtk.Tree_Model.Get_Path(Model, Row);
+      Index : Glib.Gint                    := Path.Get_Indices(0);
+
+   begin
+      Gtk.Tree_Model.Path_Free(Path);
+
+      return Index;
+   end Get_Row_Index;
+
 end File_Model_Columns;

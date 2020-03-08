@@ -190,6 +190,17 @@ package File_Model_Columns is
    --
    procedure Set_Marked (Model : in Tree_Model; Row : in Row_Iter; Marked : in Boolean);
 
+
+   -- Utilities --
+
+   --
+   -- Get_Row_Index
+   --
+   --  Return the row index corresponding to a particularly Gtk Tree
+   --  Iter.
+   --
+   function Get_Row_Index (Model : in Gtk.Tree_Model.Gtk_Tree_Model; Row : in Row_Iter) return Glib.Gint;
+
 private
 
    Column_Start : constant Glib.Gint := 2;

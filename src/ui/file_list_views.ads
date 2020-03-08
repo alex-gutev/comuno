@@ -193,6 +193,18 @@ private
       Filter_Entry  : Gtk.Gentry.Gtk_Entry;
 
       File_List     : File_List_Holders.Holder;
+
+      -- Selection Events --
+
+      -- Flag for whether the rows, between the current and previous
+      -- selection, should be marked on the next selection change
+      -- event
+      Mark_Rows       : Boolean := False;
+
+      -- Offset, from the selected row, of the last row which is to be
+      -- marked in the next selection change event.
+      Mark_End_Offset : Glib.Gint;
+
    end record;
 
    package Pointers is new Gnatcoll.Refcount.Shared_Pointers(Controller_Record);

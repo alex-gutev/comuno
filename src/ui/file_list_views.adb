@@ -23,9 +23,11 @@ with Gdk.Types.Keysyms;
 
 with Paths;
 with File_Columns;
+with File_Model_Columns;
 
 package body File_List_Views is
 
+   use type Glib.Gint;
    use type Gtk.Tree_Model.Gtk_Tree_Iter;
    use type Gdk.Types.Gdk_Modifier_Type;
 
@@ -85,6 +87,21 @@ package body File_List_Views is
       This      :        Controller);
 
    --
+   -- Keypress_Change_Selection
+   --
+   --  Handle keypress events which result in a change in the tree
+   --  view's selection.
+   --
+   --  If the a row marking is initiated, the rows between the current
+   --  selected row, and next selected row (after the selection is
+   --  changed) are marked.
+   --
+   procedure Keypress_Change_Selection
+     (This          : in out Controller_Record;
+      Event         : in     Gdk.Event.Gdk_Event_Key;
+      Mark_Selected : in     Boolean);
+
+   --
    -- On_Keypress
    --
    --  Keypress event signal handler.
@@ -111,6 +128,16 @@ package body File_List_Views is
    --  Toggle the marked state of the currently selected row.
    --
    procedure Mark_Current_Row (This : Controller);
+
+   --
+   -- Mark_Range
+   --
+   --  Toggle the marked state of all rows in the range [First, Last].
+   --
+   procedure Mark_Range
+     (This        : in out Controller_Record;
+      Model       : in     Gtk.Tree_Model.Gtk_Tree_Model;
+      First, Last : in     Glib.Gint);
 
 
    --- Constructors ---
@@ -526,11 +553,51 @@ package body File_List_Views is
    begin
       Selection.Get_Selected(Model, Row);
 
+      if Data.Mark_Rows then
+         declare
+            Prev_Index : Glib.Gint :=
+              File_Model_Columns.Get_Row_Index
+                (Model, Data.File_List.Reference.Selected_Row);
+
+            Row_Index : Glib.Gint :=
+              File_Model_Columns.Get_Row_Index(Model, Row);
+
+            First, Last : Glib.Gint;
+
+         begin
+            if Row_Index > Prev_Index then
+               First := Prev_Index;
+               Last  := Row_Index - Data.Mark_End_Offset;
+
+            else
+               First := Row_Index + Data.Mark_End_Offset;
+               Last  := Prev_Index;
+            end if;
+
+            Mark_Range(Data, Model, First, Last);
+
+            Data.Mark_Rows := False;
+         end;
+      end if;
+
       if Row /= Gtk.Tree_Model.Null_Iter then
          Data.File_List.Reference.Selection_Changed(Row);
       end if;
 
    end On_Selection_Change;
+
+   procedure Keypress_Change_Selection
+     (This          : in out Controller_Record;
+      Event         : in     Gdk.Event.Gdk_Event_Key;
+      Mark_Selected : in     Boolean) is
+
+   begin
+      if (Event.State and Gtk.Accel_Group.Get_Default_Mod_Mask) = Gdk.Types.Shift_Mask then
+         This.Mark_Rows       := True;
+         This.Mark_End_Offset := (if Mark_Selected then 0 else 1);
+      end if;
+   end Keypress_Change_Selection;
+
 
    function On_Keypress
      (View : access Gtk.Tree_View.Gtk_Tree_View_Record'Class;
@@ -581,10 +648,10 @@ package body File_List_Views is
             end if;
 
          when Keys.Gdk_Home | Keys.Gdk_End =>
-            null;
+            Keypress_Change_Selection(Data, Event.Key, True);
 
          when Keys.Gdk_Page_Up | Keys.Gdk_Page_Down =>
-            null;
+            Keypress_Change_Selection(Data, Event.Key, False);
 
          when others =>
             null;
@@ -593,6 +660,19 @@ package body File_List_Views is
 
       return False;
    end On_Keypress;
+
+   procedure On_Path_Activate
+     (View : access Gtk.Gentry.Gtk_Entry_Record'Class;
+      This : Controller) is
+
+      Data : Controller_Ref := This.Get;
+
+   begin
+      Data.List_View.Grab_Focus;
+   end On_Path_Activate;
+
+
+   -- Marking Rows --
 
    procedure Mark_Current_Row (This : Controller) is
       Data  : Controller_Ref := This.Get;
@@ -608,15 +688,16 @@ package body File_List_Views is
 
    end Mark_Current_Row;
 
-
-   procedure On_Path_Activate
-     (View : access Gtk.Gentry.Gtk_Entry_Record'Class;
-      This : Controller) is
-
-      Data : Controller_Ref := This.Get;
+   procedure Mark_Range
+     (This        : in out Controller_Record;
+      Model       : in     Gtk.Tree_Model.Gtk_Tree_Model;
+      First, Last : in     Glib.Gint) is
 
    begin
-      Data.List_View.Grab_Focus;
-   end On_Path_Activate;
+      for I in First .. Last loop
+         This.File_List.Reference.Mark_Row
+           (Gtk.Tree_Model.Nth_Child(Model, Gtk.Tree_Model.Null_Iter, I));
+      end loop;
+   end Mark_Range;
 
 end File_List_Views;
