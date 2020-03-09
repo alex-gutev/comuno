@@ -280,8 +280,7 @@ package Task_States is
    --  When the task is cancelled, either immediately or deferred, the
    --  Continue procedure of the Continuation 'C' is called.
    --
-   procedure Cancel (State : in Cancellation_State; C : in Continuation'Class)
-   with Pre => not State.Is_Empty;
+   procedure Cancel (State : in Cancellation_State; C : in Continuation'Class);
 
    --
    -- Finish

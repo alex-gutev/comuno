@@ -180,6 +180,23 @@ package Virtual_Hierarchies is
                    Path     : in Paths.Path;
                    Callback : in Operation_Callback'Class);
 
+   --
+   -- Descend
+   --
+   --  Descend into a directory which is an entry within the
+   --  hierarchy.
+   --
+   --  Ent: The entry to descend into. Must be an entry within the
+   --  hierarchy.
+   --
+   --  Returns true if the entry is a directory into which it can be
+   --  descended.
+   --
+   function Descend (Ref       : in out Virtual_Hierarchy;
+                     Dir_Entry : in Directory_Entries.Directory_Entry;
+                     Callback  : in Operation_Callback'Class)
+                    return Boolean;
+
 private
 
    use type Directory_Types.Directory_Type;

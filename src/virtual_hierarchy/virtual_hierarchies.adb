@@ -143,6 +143,79 @@ package body Virtual_Hierarchies is
    end Continue;
 
 
+   -- Descending into Directories --
+
+   --
+   -- Read_Task_Continuation
+   --
+   --  Cancellation continuation callback which initiates a new read
+   --  task.
+   --
+   type Descend_Continuation is new Task_States.Continuation with record
+      State    : Task_States.Task_State_Ref; -- Read task state
+      Data     : Data_Weak_Ptr;              -- Weak pointer to the shared hierarchy
+      Callback : Callback_Holders.Holder;    -- Operation callback object
+      Dir_type : Type_Holders.Holder;        -- Path to directory read
+   end record;
+
+   overriding procedure Continue (C : in Descend_Continuation; Cancelled : Boolean);
+
+   function Descend (Ref       : in out Virtual_Hierarchy;
+                     Dir_Entry : in Directory_Entries.Directory_Entry;
+                     Callback  : in Operation_Callback'Class)
+                    return Boolean is
+
+      Data  : Data_Ref                   := Ref.Data.Get;
+
+   begin
+      if Data.Current_Tree.Reference.Is_Subdir(Dir_Entry) then
+         -- TODO: Read subdirectory
+         return True;
+
+      else
+         declare
+            Dir_Type : Type_Holders.Holder :=
+              Type_Holders.To_Holder
+                (Data.Directory_Type.Reference.Get_Type(Dir_Entry));
+
+            State : Task_States.Task_State_Ref := Task_States.Create;
+
+            Continuation : Descend_Continuation :=
+              (State    => State,
+               Data     => Ref.Data.Weak,
+               Dir_Type => Dir_Type,
+               Callback => Callback_Holders.To_Holder(Callback));
+
+         begin
+            Data.Task_State.Cancel(Continuation);
+            Data.Task_State := State.Get_Cancellation_State;
+         end;
+
+         return True;
+      end if;
+
+   exception
+      when Directory_Types.Not_Directory =>
+         return False;
+
+   end Descend;
+
+   procedure Continue (C : in Descend_Continuation; Cancelled : Boolean) is
+      T : Read_Task.Read_Task_Ptr := Read_Task.Create;
+
+   begin
+      T.Init(C.State,
+             (Data       => C.Data,
+              Callback   => C.Callback,
+              Task_Ptr   => Background_Tasks.Background_Task_Ptr(T),
+              Task_State => C.State.Get_Cancellation_State,
+              others     => <>));
+
+      T.Read(C.Dir_Type.Constant_Reference);
+
+   end Continue;
+
+
    -- Read Callbacks --
 
    procedure Begin_Read (Data : in Read_Task_Data) is

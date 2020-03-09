@@ -105,8 +105,12 @@ package Full_File_Lists is
    --  Ent: The entry to descend into. Must be an entry obtained from
    --       the current file list.
    --
-   procedure Descend (This : in out File_List;
-                      Ent : in Directory_Entries.Directory_Entry);
+   --  Returns true if the entry is a directory into which it can be
+   --  descended.
+   --
+   function Descend (This : File_List;
+                     Ent  : Directory_Entries.Directory_Entry)
+                    return Boolean;
 
 
    -- Tree Model Accessors --

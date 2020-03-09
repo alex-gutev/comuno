@@ -304,10 +304,20 @@ package body Full_File_Lists is
 
    end Change_Path;
 
-   procedure Descend (This : in out File_List;
-                      Ent : in Directory_Entries.Directory_Entry)
-   is begin
-      null;
+   function Descend (This : File_List;
+                     Ent  : Directory_Entries.Directory_Entry)
+                    return Boolean is
+
+      Data : Data_Ref := This.Data.Get;
+
+      Callback : Read_Callback :=
+        (Data        => This.Data.Weak,
+         List        => Make_List_Store,
+         Move_To_Old => False);
+
+   begin
+      return Data.Hierarchy.Descend(Ent, Callback);
+
    end Descend;
 
 

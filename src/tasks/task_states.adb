@@ -185,7 +185,13 @@ package body Task_States is
 
    procedure Cancel (State : Cancellation_State; C : Continuation'Class) is
    begin
-      State.Object.Cancel(C);
+      if not State.Is_Empty then
+         State.Object.Cancel(C);
+
+      else
+         C.Continue(False);
+
+      end if;
    end Cancel;
 
    procedure Finish (State : Cancellation_State) is
