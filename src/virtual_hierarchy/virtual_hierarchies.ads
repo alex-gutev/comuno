@@ -197,6 +197,19 @@ package Virtual_Hierarchies is
                      Callback  : Operation_Callback'Class)
                     return Boolean;
 
+   --
+   -- Ascend
+   --
+   --  Move to the parent directory of the current directory.
+   --
+   --  Returns true if the current directory has a parent, otherwise
+   --  returns false if the current directory is the hierarchy's base
+   --  directory.
+   --
+   function Ascend (Ref      : Virtual_Hierarchy;
+                    Callback : Operation_Callback'Class)
+                   return Boolean;
+
 private
 
    use type Directory_Types.Directory_Type;

@@ -307,6 +307,7 @@ package body Full_File_Lists is
    function Descend (This : File_List;
                      Ent  : Directory_Entries.Directory_Entry)
                     return Boolean is
+      use Directory_Entries;
 
       Data : Data_Ref := This.Data.Get;
 
@@ -316,8 +317,30 @@ package body Full_File_Lists is
          Move_To_Old => False);
 
    begin
-      return Data.Hierarchy.Descend(Ent, Callback);
+      if Kind(Ent) = File_System.Parent then
+         declare
+            New_Path : Paths.Path :=
+              Data.Path.Remove_Last_Component;
 
+         begin
+            Callback.Move_To_Old := True;
+
+            Prepare_Read(Data);
+
+            if not Data.Hierarchy.Ascend(Callback) then
+               Data.Hierarchy.Read(New_Path, Callback);
+            end if;
+         end;
+
+         return True;
+
+      elsif Data.Hierarchy.Descend(Ent, Callback) then
+         Prepare_Read(Data);
+         return True;
+
+      end if;
+
+      return False;
    end Descend;
 
 

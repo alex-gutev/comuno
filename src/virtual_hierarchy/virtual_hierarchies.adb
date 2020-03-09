@@ -208,6 +208,23 @@ package body Virtual_Hierarchies is
    end Continue;
 
 
+   -- Ascending Up Directory Tree --
+
+   function Ascend (Ref      : Virtual_Hierarchy;
+                    Callback : Operation_Callback'Class)
+                   return Boolean is
+      Data : Data_Ref := Ref.Data.Get;
+
+   begin
+      if not Data.Current_Tree.Reference.At_Basedir then
+         -- TODO: Read subdirectory
+         return True;
+      end if;
+
+      return False;
+   end Ascend;
+
+
    -- Read Callbacks --
 
    procedure Begin_Read (Data : in Read_Task_Data) is
