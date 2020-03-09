@@ -14,10 +14,15 @@ with Glib.Object;
 with Gtk.Builder;
 with Gtk.Widget;
 with Gtk.Handlers;
+with Gtk.Tree_Model;
+with Gtk.List_Store;
+with Gtk.Tree_View_Column;
 
 with Gdk.Event;
 
 with Paths;
+with Directory_Entries;
+with File_Model_Columns;
 
 package body Comuno_Window is
 
@@ -66,6 +71,14 @@ package body Comuno_Window is
       Data.List.Change_Path(Paths.Make_Path(Data.View.Get_Path));
    end On_Path_Activate;
 
+   --
+   -- Row Activate Signal Handler.
+   --
+   procedure On_Row_Activate
+     (View   : access Gtk.Widget.Gtk_Widget_Record'Class;
+      Path   :        Gtk.Tree_Model.Gtk_Tree_Path;
+      Column :        Gtk.Tree_View_Column.Gtk_Tree_View_Column;
+      Data   :        Event_data);
 
 
    --- Constructors ---
@@ -177,7 +190,40 @@ package body Comuno_Window is
           View   => View,
           List   => List));
 
+      File_View_Events.Connect_Row_Activate
+        (View,
+         File_View_Events.Void_Handlers.To_Marshaller (On_Row_Activate'Access),
+         (Window => This,
+          View   => View,
+          List   => List));
+
    end Init_File_View_Events;
+
+
+   -- Signal Handlers --
+
+   procedure On_Row_Activate
+     (View   : access Gtk.Widget.Gtk_Widget_Record'Class;
+      Path   :        Gtk.Tree_Model.Gtk_Tree_Path;
+      Column :        Gtk.Tree_View_Column.Gtk_Tree_View_Column;
+      Data   :        Event_data) is
+
+      Model : Gtk.List_Store.Gtk_List_Store := Data.List.Get_List;
+
+      Row : Gtk.Tree_Model.Gtk_Tree_Iter :=
+        Data.List.Get_List.Get_Iter(Path);
+
+      Ent : Directory_Entries.Directory_Entry :=
+        File_Model_Columns.Get_Entry(Model, Row);
+
+   begin
+      if not Data.List.Descend(Ent) then
+         -- TODO: Open File
+         null;
+      end if;
+
+   end On_Row_Activate;
+
 
    --- Accessors ---
 

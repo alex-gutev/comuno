@@ -192,9 +192,9 @@ package Virtual_Hierarchies is
    --  Returns true if the entry is a directory into which it can be
    --  descended.
    --
-   function Descend (Ref       : in out Virtual_Hierarchy;
-                     Dir_Entry : in Directory_Entries.Directory_Entry;
-                     Callback  : in Operation_Callback'Class)
+   function Descend (Ref       : Virtual_Hierarchy;
+                     Dir_Entry : Directory_Entries.Directory_Entry;
+                     Callback  : Operation_Callback'Class)
                     return Boolean;
 
 private

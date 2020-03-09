@@ -115,16 +115,8 @@ package body Virtual_Hierarchies is
          Callback => Callback_Holders.To_Holder(Callback));
 
    begin
-
-      if not Data.Task_State.Is_Empty then
-         Data.Task_State.Cancel(Continuation);
-         Data.Task_State := State.Get_Cancellation_State;
-
-      else
-         Data.Task_State := State.Get_Cancellation_State;
-         Continuation.Continue(False);
-
-      end if;
+      Data.Task_State.Cancel(Continuation);
+      Data.Task_State := State.Get_Cancellation_State;
 
    end Read;
 
@@ -158,14 +150,14 @@ package body Virtual_Hierarchies is
       Dir_type : Type_Holders.Holder;        -- Path to directory read
    end record;
 
-   overriding procedure Continue (C : in Descend_Continuation; Cancelled : Boolean);
+   overriding procedure Continue (C : Descend_Continuation; Cancelled : Boolean);
 
-   function Descend (Ref       : in out Virtual_Hierarchy;
-                     Dir_Entry : in Directory_Entries.Directory_Entry;
-                     Callback  : in Operation_Callback'Class)
+   function Descend (Ref       : Virtual_Hierarchy;
+                     Dir_Entry : Directory_Entries.Directory_Entry;
+                     Callback  : Operation_Callback'Class)
                     return Boolean is
 
-      Data  : Data_Ref                   := Ref.Data.Get;
+      Data : Data_Ref := Ref.Data.Get;
 
    begin
       if Data.Current_Tree.Reference.Is_Subdir(Dir_Entry) then
@@ -200,7 +192,7 @@ package body Virtual_Hierarchies is
 
    end Descend;
 
-   procedure Continue (C : in Descend_Continuation; Cancelled : Boolean) is
+   procedure Continue (C : Descend_Continuation; Cancelled : Boolean) is
       T : Read_Task.Read_Task_Ptr := Read_Task.Create;
 
    begin
