@@ -148,12 +148,13 @@ package body Hierarchical_Directory_Trees is
 
    -- Tree Subpath --
 
-   function Subpath (This : Directory_Tree) return Paths.Path is
-      (Paths.Path(This.Subdir));
+   function Subpath (This : Directory_Tree) return Paths.Canonical_Paths.Canonical_Path is
+      (This.Subdir);
 
 
-   procedure Set_Subpath (This : in out Directory_Tree; Path : in Paths.Path) is
-      Subpath : Path_Key := Canonical_Paths.Canonicalize(Path);
+   procedure Set_Subpath (This : in out Directory_Tree;
+                          Path : in Paths.Canonical_Paths.Canonical_Path) is
+      Subpath : Path_Key := Path;
 
    begin
 
@@ -192,11 +193,19 @@ package body Hierarchical_Directory_Trees is
    end Get_Entry;
 
 
-   procedure Iterate (This : Directory_Tree; F : access procedure (E : Directory_Entry)) is
-      Map : Directory_Maps.Constant_Reference_Type := This.Directories(This.Subdir);
+   procedure Iterate (This    : in     Directory_Tree;
+                      Subpath : in     Paths.Canonical_Paths.Canonical_Path;
+                      F       : access procedure (E : Directory_Entry)) is
+
+      Cursor : Directory_Maps.Cursor :=
+        This.Directories.Find(Subpath);
 
    begin
-      for Key of Map loop
+      if not Directory_Maps.Has_Element(Cursor) then
+         raise Directory_Trees.Not_Subdirectory;
+      end if;
+
+      for Key of This.Directories.Constant_Reference(Cursor) loop
          F.all(This.Entries(Key));
       end loop;
    end Iterate;

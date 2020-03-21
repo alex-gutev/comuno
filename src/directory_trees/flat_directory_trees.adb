@@ -23,17 +23,18 @@ package body Flat_Directory_Trees is
 
    -- Subdirectories --
 
-   function Subpath (This : in Flat_Directory_Tree) return Paths.Path is
-     (Paths.Make_Path(""));
+   function Subpath (This : in Flat_Directory_Tree) return Paths.Canonical_Paths.Canonical_Path is
+     (Paths.Canonical_Paths.Canonicalize(Paths.Make_Path("")));
 
-   procedure Set_Subpath (This : in out Flat_Directory_Tree; Path : in Paths.Path) is
+   procedure Set_Subpath (This : in out Flat_Directory_Tree;
+                          Path : in Paths.Canonical_Paths.Canonical_Path) is
       pragma Unreferenced (Path);
 
       pragma Assertion_Policy (Check);
       pragma Assert(False, "Cannot set subpath of Flat_Directory_Tree");
 
    begin
-      null;
+      raise Directory_Trees.Not_Subdirectory;
    end Set_Subpath;
 
 
@@ -63,8 +64,14 @@ package body Flat_Directory_Trees is
    end Get_Entry;
 
 
-   procedure Iterate (This : Flat_Directory_Tree; F : access procedure (E : Directory_Entry)) is
+   procedure Iterate (This    : in     Flat_Directory_Tree;
+                      Subpath : in     Paths.Canonical_Paths.Canonical_Path;
+                      F       : access procedure (E : Directory_Entry)) is
    begin
+      if not Subpath.Is_Empty then
+         raise Directory_Trees.Not_Subdirectory;
+      end if;
+
       for Ent of This.Entries loop
          F.all(Ent);
       end loop;

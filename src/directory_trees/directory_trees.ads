@@ -15,6 +15,7 @@ with Listers;
 with File_System;
 with Directory_Entries; use Directory_Entries;
 with Paths;
+with Paths.Canonical_Paths;
 
 --
 -- Purpose:
@@ -76,7 +77,7 @@ package Directory_Trees is
    --  The subpath controls which entries are visited by the Iterate
    --  procedure.
    --
-   function Subpath (This : Directory_Tree) return Paths.Path
+   function Subpath (This : Directory_Tree) return Paths.Canonical_Paths.Canonical_Path
      is abstract;
 
    --
@@ -84,7 +85,8 @@ package Directory_Trees is
    --
    --  Set the tree's current subdirectory.
    --
-   procedure Set_Subpath (This : in out Directory_Tree; Path : in Paths.Path)
+   procedure Set_Subpath (This : in out Directory_Tree;
+                          Path : in Paths.Canonical_Paths.Canonical_Path)
      is abstract;
 
 
@@ -132,10 +134,12 @@ package Directory_Trees is
    --
    -- Iterate
    --
-   --  Call the procedure F, of one argument, on each entry in the
-   --  current subdirectory of the tree.
+   --  Call the procedure F, of one argument, on each entry in a
+   --  subdirectory of the tree.
    --
-   procedure Iterate (This : in Directory_Tree; F : access procedure (E : Directory_Entry))
+   procedure Iterate (This    : in     Directory_Tree;
+                      Subpath : in     Paths.Canonical_Paths.Canonical_Path;
+                      F       : access procedure (E : Directory_Entry))
      is abstract;
 
 private

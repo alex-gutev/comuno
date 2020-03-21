@@ -108,7 +108,7 @@ package body Read_Tasks is
             end loop;
          end;
 
-         Tree.Reference.Iterate(Call_New_Entry'Access);
+         Tree.Reference.Iterate(Tree.Reference.Subpath, Call_New_Entry'Access);
 
          State.Enter_Foreground;
 

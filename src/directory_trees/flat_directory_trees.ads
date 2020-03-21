@@ -11,6 +11,7 @@ pragma License (GPL);
 
 with File_System;
 with Paths;
+with Paths.Canonical_Paths;
 with Directory_Entries; use Directory_Entries;
 with Directory_Trees;
 
@@ -42,9 +43,10 @@ package Flat_Directory_Trees is
    procedure Add_Entry (This : in out Flat_Directory_Tree; Ent : in Directory_Entry);
 
 
-   function Subpath (This : in Flat_Directory_Tree) return Paths.Path;
+   function Subpath (This : in Flat_Directory_Tree) return Paths.Canonical_Paths.Canonical_Path;
 
-   procedure Set_Subpath (This : in out Flat_Directory_Tree; Path : in Paths.Path);
+   procedure Set_Subpath (This : in out Flat_Directory_Tree;
+                          Path : in Paths.Canonical_Paths.Canonical_Path);
 
 
    function Is_Subdir (This : in Flat_Directory_Tree; Ent : in Directory_Entry) return Boolean;
@@ -57,7 +59,9 @@ package Flat_Directory_Trees is
    function Get_Entry (This : Flat_Directory_Tree; Name : Paths.Path) return Directory_Entry;
 
 
-   procedure Iterate (This : in Flat_Directory_Tree; F : access procedure (E : Directory_Entry));
+   procedure Iterate (This    : in     Flat_Directory_Tree;
+                      Subpath : in     Paths.Canonical_Paths.Canonical_Path;
+                      F       : access procedure (E : Directory_Entry));
 
 private
 

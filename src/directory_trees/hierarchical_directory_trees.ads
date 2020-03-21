@@ -39,9 +39,10 @@ package Hierarchical_Directory_Trees is
    procedure Add_Entry (This : in out Directory_Tree; New_Entry : in Directory_Entry);
 
 
-   function Subpath (This : Directory_Tree) return Paths.Path;
+   function Subpath (This : Directory_Tree) return Paths.Canonical_Paths.Canonical_Path;
 
-   procedure Set_Subpath (This : in out Directory_Tree; Path : in Paths.Path);
+   procedure Set_Subpath (This : in out Directory_Tree;
+                          Path : in Paths.Canonical_Paths.Canonical_Path);
 
 
    function Is_Subdir (This : Directory_Tree; Ent : Directory_Entry) return Boolean;
@@ -54,7 +55,9 @@ package Hierarchical_Directory_Trees is
    function Get_Entry (This : Directory_Tree; Name : Paths.Path) return Directory_Entry;
 
 
-   procedure Iterate (This : in Directory_Tree; F : access procedure (E : Directory_Entry));
+   procedure Iterate (This    : in     Directory_Tree;
+                      Subpath : in     Paths.Canonical_Paths.Canonical_Path;
+                      F       : access procedure (E : Directory_Entry));
 
 private
 
