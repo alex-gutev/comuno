@@ -223,6 +223,9 @@ private
    package Changed_Listener_Holders is new Ada.Containers.Indefinite_Holders (Directory_Changed_Listener'Class);
    package Deleted_Listener_Holders is new Ada.Containers.Indefinite_Holders (Directory_Deleted_Listener'Class);
 
+   package Callback_Holders is new Ada.Containers.Indefinite_Holders
+     (Operation_Callback'Class);
+
 
    --
    -- Virtual_Hierarchy_Data
