@@ -15,7 +15,12 @@ with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
 with Ada.Strings.Unbounded.Hash;
 with Ada.Containers.Vectors;
 
+with Interfaces.C.Strings;
+
 package body Paths is
+
+   package Cstr renames Interfaces.C.Strings;
+
 
    -- Constructors --
 
@@ -315,6 +320,71 @@ package body Paths is
          P1.Name := P2.Name;
       end if;
    end Merge;
+
+
+   -- Tilde Expansion --
+
+   function Home_Dir return Cstr.Chars_Ptr;
+   pragma Import(C, Home_Dir);
+
+   function User_Home_Dir (User : Cstr.Chars_Ptr) return Cstr.Chars_Ptr;
+   pragma Import(C, User_Home_Dir);
+
+   --
+   -- Get_User_Home_Dir
+   --
+   --  Return the home directory for a User as a C string.
+   --
+   function Get_User_Home_Dir (User : Path_String) return Cstr.Chars_Ptr;
+
+
+   function Expand_Tilde (P : Path) return Path is
+      use type Cstr.Chars_Ptr;
+
+   begin
+      if not P.Is_Empty and Element(P.Name, 1) = Tilde then
+         declare
+            Slash_Pos  : Natural     := Index(P.Name, Separator_String);
+            Tilde_Comp : Path_String :=
+              (case Slash_Pos is
+                  when 0 => To_String(P.Name),
+                  when others => Slice(P.Name, 1, Slash_Pos - 1));
+
+            Home : Cstr.Chars_Ptr :=
+              (if Tilde_Comp'Length = 1 then
+                  Home_Dir
+               else
+                  Get_User_Home_Dir
+                    (Tilde_Comp(Tilde_Comp'First + 1 .. Tilde_Comp'Last)));
+
+         begin
+            if Home /= Cstr.Null_Ptr then
+               case Slash_Pos is
+                  when 0 =>
+                     return Make_Path(Cstr.Value(Home));
+
+                  when others =>
+                     return Make_Path(Cstr.Value(Home)).Append
+                       (Make_Path
+                          (Slice(P.Name, Slash_Pos + 1, Length(P.Name))));
+
+               end case;
+            end if;
+         end;
+      end if;
+
+      return P;
+   end Expand_Tilde;
+
+   function Get_User_Home_Dir (User : Path_String) return Cstr.Chars_Ptr is
+      Str : Cstr.Chars_Ptr := Cstr.New_String(User);
+      Home : Cstr.Chars_Ptr := User_Home_Dir(Str);
+
+   begin
+      Cstr.Free(Str);
+      return Home;
+
+   end Get_User_Home_Dir;
 
 
    -- Comparing Paths

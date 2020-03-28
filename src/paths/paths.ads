@@ -64,6 +64,11 @@ package Paths is
    Self_Component   : constant Path_String := ".";
    Parent_Component : constant Path_String := "..";
 
+   --
+   -- Character which represents the user's home directory when it
+   -- appears as the leading character in a path.
+   --
+   Tilde : constant Character := '~';
 
    -- Constructors --
 
@@ -286,6 +291,14 @@ package Paths is
    --
    function Merge (P1, P2 : Path) return Path;
    procedure Merge (P1 : in out Path; P2 : in Path);
+
+   --
+   -- Expand_Tilde
+   --
+   --  Replace leading tilde's '~' with the absolute path to the
+   --  user's home directory.
+   --
+   function Expand_Tilde (P : Path) return Path;
 
 
    -- Comparing Paths --

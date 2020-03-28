@@ -66,7 +66,11 @@ package body Directory_Types is
       Subpath : Paths.Path;
 
    begin
-      Canonicalize_Case(Paths.Canonical_Paths.Canonicalize(Path), Dir, Subpath);
+      Canonicalize_Case
+        (Paths.Canonical_Paths.Canonicalize
+           (Paths.Expand_Tilde(Path)),
+         Dir,
+         Subpath);
 
       -- TODO: If Subpath is not empty create an archive lister.
 
