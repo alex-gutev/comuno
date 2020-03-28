@@ -10,6 +10,7 @@
 pragma License (GPL);
 
 with Ada.Finalization;
+with Ada.Containers.Indefinite_Holders;
 with Ada.Containers.Indefinite_Hashed_Maps;
 with Ada.Strings.Hash;
 
@@ -113,6 +114,33 @@ package Full_File_Lists is
                     return Boolean;
 
 
+   -- Path Change Events --
+
+   --
+   -- Path_Changed_Callback
+   --
+   --  Interface type for a callback which is called when the path to
+   --  the directory, of which the contents are stored in the file
+   --  list, changes.
+   --
+   type Path_Changed_Callback is interface;
+
+   --
+   -- Path_Changed
+   --
+   --  Called when the path to the directory changes.
+   --
+   procedure Path_Changed (Callback : Path_Changed_Callback; Path : Paths.Path) is abstract;
+
+   --
+   -- Set_Path_Changed_Callback
+   --
+   --  Set a callback which is called when the path to the directory,
+   --  of which the contents are displayed in the file list, changes.
+   --
+   procedure Set_Path_Changed_Callback (This : File_List; Callback : Path_Changed_Callback'Class);
+
+
    -- Tree Model Accessors --
 
    overriding function Get_List (This : in File_List) return Gtk.List_Store.Gtk_List_Store;
@@ -147,24 +175,32 @@ private
         Equivalent_Keys => "=",
         Hash            => Ada.Strings.Hash);
 
+
+   --
+   -- Path Changed Callback Holders
+   --
+   package Callback_Holders is new
+     Ada.Containers.Indefinite_Holders (Path_Changed_Callback'Class);
+
    --
    -- File_List_Data
    --
    --  Shared file list object.
    --
    type File_List_Data is record
-      Path       : Paths.Path;                    -- Path to the directory
-      Hierarchy  : Virtual_Hierarchy;             -- Virtual directory hierarchy
+      Path          : Paths.Path;                   -- Path to the directory
+      Hierarchy     : Virtual_Hierarchy;            -- Virtual directory hierarchy
 
-      Empty_List : File_Model_Columns.Model_Ref; -- Empty Tree Model, displayed while reading
-      List       : File_Model_Columns.Model_Ref; -- Tree Model storing actual directory contents
+      Empty_List    : File_Model_Columns.Model_Ref; -- Empty Tree Model, displayed while reading
+      List          : File_Model_Columns.Model_Ref; -- Tree Model storing actual directory contents
 
-      Selection  : Gtk.Tree_Model.Gtk_Tree_Iter;  -- Selected Row
-      Marked_Set : Entry_Maps.Map;                -- Set of marked entries
+      Selection     : Gtk.Tree_Model.Gtk_Tree_Iter; -- Selected Row
+      Marked_Set    : Entry_Maps.Map;               -- Set of marked entries
 
-      Listener   : Listener_Holders.Holder;       -- Listener object
+      Listener      : Listener_Holders.Holder;      -- Listener object
+      Path_Callback : Callback_Holders.Holder;      -- Path Changed Callback
 
-      Reading    : Boolean;                       -- Flag for whether currently reading directory
+      Reading       : Boolean;                      -- Flag for whether currently reading directory
    end record;
 
 

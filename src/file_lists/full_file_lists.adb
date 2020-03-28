@@ -343,6 +343,15 @@ package body Full_File_Lists is
       return False;
    end Descend;
 
+   procedure Set_Path_Changed_Callback (This : File_List; Callback : Path_Changed_Callback'Class) is
+      Data : Data_Ref := This.Data.Get;
+
+   begin
+      Data.Path_Callback.Replace_Element(Callback);
+
+   end Set_Path_Changed_Callback;
+
+
 
    procedure Prepare_Read (This : in out File_List_Data) is
    begin
@@ -390,6 +399,10 @@ package body Full_File_Lists is
       Update_Selection(This, Move_To_Old);
 
       This.Path := This.Hierarchy.Path;
+
+      if not This.Path_Callback.Is_Empty then
+         This.Path_Callback.Reference.Path_Changed(This.Path);
+      end if;
 
    end Finish_Read;
 

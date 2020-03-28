@@ -96,6 +96,17 @@ package File_List_Views is
    --
    function Get_Path (This : Controller) return Glib.Utf8_String;
 
+   --
+   -- Set_Path
+   --
+   --  Set the contents of the path entry.
+   --
+   --  NOTE: This procedure does not change the contents of the file
+   --  list tree view, nor does it initiate any directory read
+   --  operations.
+   --
+   procedure Set_Path (This : Controller; Path : String);
+
 
    -- File List Listener Interface Operations --
 

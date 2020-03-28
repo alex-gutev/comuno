@@ -421,6 +421,13 @@ package body File_List_Views is
       return Data.Path_Entry.Get_Text;
    end Get_Path;
 
+   procedure Set_Path (This : Controller; Path : String) is
+      Data : Controller_Ref := This.Get;
+
+   begin
+      Data.Path_Entry.Set_Text(Path);
+   end Set_Path;
+
 
    --- Changing File List ---
 

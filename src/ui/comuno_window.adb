@@ -172,6 +172,17 @@ package body Comuno_Window is
 
    -- File View Initialization --
 
+   --
+   -- File list path changed callback type.
+   --
+   --  Updates the contents of a view's path entry.
+   --
+   type Path_Changed_Callback is new Full_File_Lists.Path_Changed_Callback with record
+      View : File_List_Views.Controller;
+   end record;
+
+   overriding procedure Path_Changed (This : Path_Changed_Callback; Path : Paths.Path);
+
    procedure Init_File_View_Events (This : Controller;
                                     View : File_List_Views.Controller;
                                     List : Full_File_Lists.File_List) is
@@ -197,7 +208,17 @@ package body Comuno_Window is
           View   => View,
           List   => List));
 
+      List.Set_Path_Changed_Callback(Path_Changed_Callback'(View => View));
+
    end Init_File_View_Events;
+
+
+   -- Path Changed Callback --
+
+   procedure Path_Changed (This : Path_Changed_Callback; Path : Paths.Path) is
+   begin
+      This.View.Set_Path(Path.To_String);
+   end Path_Changed;
 
 
    -- Signal Handlers --
