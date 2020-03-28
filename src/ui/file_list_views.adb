@@ -485,6 +485,14 @@ package body File_List_Views is
       if Row /= Gtk.Tree_Model.Null_Iter then
          Data.List_View.Get_Selection.Select_Iter(Row);
 
+         declare
+            Path : Gtk.Tree_Model.Gtk_Tree_Path :=
+              Data.File_List.Reference.Get_List.Get_Path(Row);
+
+         begin
+            Data.List_View.Scroll_To_Cell(Path, null, True, 0.5, 0.0);
+            Gtk.Tree_Model.Path_Free(Path);
+         end;
       end if;
    end Select_Row;
 
