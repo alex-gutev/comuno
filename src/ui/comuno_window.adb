@@ -68,7 +68,8 @@ package body Comuno_Window is
       Data : Event_Data) is
 
    begin
-      Data.List.Change_Path(Paths.Make_Path(Data.View.Get_Path));
+      Data.List.Change_Path
+        (Data.List.Path.Ensure_Directory.Merge(Paths.Make_Path(Data.View.Get_Path)));
    end On_Path_Activate;
 
    --
