@@ -111,6 +111,13 @@ package body Full_File_Lists is
    --
    procedure Reset_List (This : in out File_List_Data);
 
+   --
+   -- Call_Changed_Path
+   --
+   --  Call the path changed callback.
+   --
+   procedure Call_Changed_Path (This : in out File_List_Data);
+
 
    -- Changing Selection --
 
@@ -400,9 +407,7 @@ package body Full_File_Lists is
 
       This.Path := This.Hierarchy.Path;
 
-      if not This.Path_Callback.Is_Empty then
-         This.Path_Callback.Reference.Path_Changed(This.Path);
-      end if;
+      Call_Changed_Path(This);
 
    end Finish_Read;
 
@@ -441,6 +446,15 @@ package body Full_File_Lists is
    end Set_New_List;
 
 
+   procedure Call_Changed_Path (This : in out File_List_Data) is
+   begin
+      if not This.Path_Callback.Is_Empty then
+         This.Path_Callback.Reference.Path_Changed(This.Path);
+      end if;
+
+   end Call_Changed_Path;
+
+
    -- Handling Read Directory Errors --
 
    procedure Operation_Error (This  : in Read_Callback;
@@ -452,6 +466,7 @@ package body Full_File_Lists is
 
       if not Ptr.Is_Null then
          Reset_List(Ptr.Get);
+         Call_Changed_Path(Ptr.Get);
       end if;
 
    end Operation_Error;
