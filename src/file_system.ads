@@ -61,4 +61,13 @@ package File_System is
       Modification_Time : Ada.Calendar.Time; -- Modification Time
       Access_Time       : Ada.Calendar.Time; -- Acces Time
    end record;
+
+   --
+   -- Unique file identifier
+   --
+   type File_Id is record
+      Device : Device_Id;
+      Inode  : Inode_Id;
+   end record;
+
 end File_System;
