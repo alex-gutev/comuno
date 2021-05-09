@@ -76,6 +76,19 @@ package Directory_Writers is
    type Directory_Writer is limited interface;
 
    --
+   -- Close
+   --
+   --  Release all file system resources held by the Directory_Writer
+   --  object.
+   --
+   --  Should raise a Close_Error exception if there was an error
+   --  committing the changes to the directory, to the underlying
+   --  storage medium.
+   --
+   procedure Close (This : in out Directory_Writer) is abstract;
+
+
+   --
    -- Create_File
    --
    --  Create a new file within the directory.
@@ -205,5 +218,35 @@ package Directory_Writers is
                          Path : in Paths.Path)
                         return File_System.File_Id
      is abstract;
+
+
+   -- Exceptions --
+
+   --
+   -- Exception representing an error when opening a directory
+   --
+   Open_Error  : exception;
+
+   --
+   -- Exception representing an error in committing the changes to a
+   -- directory, while closing.
+   --
+   Close_Error : exception;
+
+   --
+   -- Exception representing an error when creating a new directory.
+   --
+   Make_Directory_Error : exception;
+
+   --
+   -- Exception representing an error when creating a symbolic link
+   --
+   Symlink_Error        : exception;
+
+   --
+   -- Exception representing an error in setting the attributes of a
+   -- file.
+   --
+   Set_Attributes_Error : exception;
 
 end Directory_Writers;
