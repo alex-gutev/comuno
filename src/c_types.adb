@@ -20,6 +20,13 @@ package body C_Types is
         Duration(Seconds);
    end To_Ada_Time;
 
+   function To_Unix_Time (Time : Ada.Calendar.Time) return Timestamp is
+     (Timestamp
+        (Time -
+           Ada.Calendar.Formatting.Time_Of
+             (Year => 1970, Month => 1, Day => 1, Time_Zone => 0)));
+
+
    function Convert (Attrs : Attributes) return File_System.Attributes is
       package Fs renames File_System;
 
@@ -36,4 +43,18 @@ package body C_Types is
               Modification_Time => To_Ada_Time(Attrs.Modification_Time),
               Access_Time       => To_Ada_Time(Attrs.Access_Time));
    end Convert;
+
+   function To_C (Attrs : File_System.Attributes) return Attributes is
+     (Device            => Attribute(Attrs.Device),
+      Inode             => Attribute(Attrs.Inode),
+      Mode              => Attribute(Attrs.Mode),
+      Kind              => Attribute(File_System.File_Type'Pos(Attrs.Kind)),
+      Num_Links         => Attribute(Attrs.Num_Links),
+      User              => Attribute(Attrs.User),
+      Group             => Attribute(Attrs.Group),
+      Size              => Attribute(Attrs.Size),
+      Block_Size        => Attribute(Attrs.Block_Size),
+      Modification_Time => To_Unix_Time(Attrs.Modification_Time),
+      Access_Time       => To_Unix_Time(Attrs.Modification_Time));
+
 end C_Types;

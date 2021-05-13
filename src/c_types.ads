@@ -85,8 +85,19 @@ package C_Types is
    function To_Ada_Time (Seconds : Timestamp) return Ada.Calendar.Time;
 
    --
+   -- Convert an Ada Time Type to a Unix timestamp
+   --
+   function To_Unix_Time (Time : Ada.Calendar.Time) return Timestamp;
+
+   --
    -- Converts an Attributes record (obtained from C) to a
    -- File_System.Attributes record
    --
    function Convert (Attrs : Attributes) return File_System.Attributes;
+
+   --
+   -- Convert an Ada Attributes record to a C Attributes record
+   -- interoperable with the equivalent c struct.
+   --
+   function To_C (Attrs : File_System.Attributes) return Attributes;
 end C_Types;
