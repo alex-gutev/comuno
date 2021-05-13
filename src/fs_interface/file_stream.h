@@ -26,6 +26,8 @@
 #include <stdlib.h>
 #include <sys/types.h>
 
+#include "types.h"
+
 #define FILE_FLAG_EXCL 1
 
 /**
@@ -149,6 +151,39 @@ void *file_outstream_create_at(int fd, const char *path, int flags, int perms);
  *   written was committed to the storage medium, non-zero otherwise.
  */
 int file_outstream_close(void *handle);
+
+/**
+ * Set the access and modification times of the underlying file.
+ *
+ * @param handle Pointer to the output stream.
+ * @param mod Modification timestamp
+ * @param access Access timestamp
+ *
+ * @return 0 if successful, non-zero on error.
+ */
+int file_outstream_set_times(void *handle, uint64_t mod, uint64_t access);
+
+/**
+ * Set the permissions (mode) of the underlying file.
+ *
+ * @param handle Pointer to the output stream.
+ * @param mode New file permissions (equivalent to stat.st_mode)
+ *
+ * @return 0 if successful, non-zero on error.
+ */
+int file_outstream_set_mode(void *handle, uint64_t mode);
+
+/**
+ * Set the owner and group of the underlying file.
+ *
+ * @param handle Pointer to the output stream.
+ *
+ * @param attr file_attributes structure containing the new file owner
+ *   and new group.
+ *
+ * @return 0 if successful, non-zero on error.
+ */
+int file_outstream_set_owner(void *handle, const struct file_attributes *attr);
 
 /**
  * Seek to a particular location within the file output stream.

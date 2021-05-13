@@ -68,3 +68,138 @@ int get_entry(void *handle, struct dir_entry *ent);
  *   there was an error.
  */
 int get_attributes(void *handle, const char *name, struct file_attributes *attrs);
+
+
+/* Writer Interface */
+
+/**
+ * Open a directory, in order to modify its contents.
+ *
+ * @param path Path to the directory.
+ *
+ * @return File descriptor of the directory (>= 0), or < 0 on error.
+ */
+int dir_writer_open(const char *path);
+
+/**
+ * Close a directory.
+ *
+ * @param dir File descriptor of the directory.
+ *
+ * @return 0 if successful, non-zero if an error occurred.
+ */
+int dir_writer_close(int dir);
+
+/**
+ * Create a directory.
+ *
+ * @param dir File descriptor of the parent directory.
+ *
+ * @param path Name/subpath at which to create the directory relative
+ *    to the the parent directory.
+ *
+ * @return 0 if successful, non-zero on error.
+ */
+int dir_writer_make_dir(int dir, const char *path);
+
+/**
+ * Create a symbolic link.
+ *
+ * @param dir File descriptor of the parent directory.
+ *
+ * @param path Name/subpath at which to create the symbolic link,
+ *   relative to the parent directory.
+ *
+ * @param target Path to the file the link points to.
+ *
+ * @param attr New attributes of the symbolic link.
+ *
+ * @return 0 if successful, non-zero on error.
+ */
+int dir_writer_symlink(int dir, const char *path, const char *target, struct file_attributes *attr);
+
+/**
+ * Set the permissions (mode) of a file.
+ *
+ * @param dir File descriptor of the parent directory.
+ *
+ * @param path Name/subpath of the file of which to change the
+ *   permissions, relative to the parent directory.
+ *
+ * @param mode New file mode, equivalent to the stat.st_mode
+ *   field. Only permission bits should be set.
+ *
+ * @return 0 if successful, non-zero on error.
+ */
+int dir_writer_set_mode(int dir, const char *path, uint64_t mode);
+
+/**
+ * Set the owner and group of a file.
+ *
+ * @param dir File descriptor of the parent directory.
+ *
+ * @param path Name/subpath of the file of which to change the
+ *   owner, relative to the parent directory.
+ *
+ * @param attr file_attributes structure containing the new value for
+ *   the file owner and group.
+ *
+ * @return 0 if successful, non-zero on error.
+ */
+int dir_writer_set_owner(int dir, const char *path, struct file_attributes *attr);
+
+/**
+ * Set the access and modification time of a file.
+ *
+ * @param dir File descriptor of the parent directory.
+ *
+ * @param path Name/subpath of the file of which to change the access
+ *   and modification times, relative to the parent directory.
+ *
+ * @param attr file_attributes structure containing the new value for
+ *   the access and modification time.
+ *
+ * @return 0 if successful, non-zero on error.
+ */
+int dir_writer_set_times(int dir, const char *path, struct file_attributes *attr);
+
+/**
+ * Check if a file exists in a directory.
+ *
+ * @param dir File descriptor of the parent directory.
+ *
+ * @param path Name/subpath to the file to check for existence,
+ *   relative to the parent directory.
+ *
+ * @return 0 if the file exists, non-zero otherwise.
+ */
+int dir_writer_check(int dir, const char *path);
+
+/**
+ * Rename a file within a directory.
+ *
+ * Does not check if a file exists at the destination path.
+ *
+ * @param dir File descriptor of the parent directory.
+ *
+ * @param src Name/subpath of the file to rename, relative to the
+ *   parent directory.
+ *
+ * @param dest Name/subpath to which the file should be renamed,
+ *   relative to the parent directory.
+ *
+ * @return 0 if the file exists, non-zero otherwise.
+ */
+int dir_writer_rename(int dir, const char *src, const char *dest);
+
+/**
+ * Remove a file/directory.
+ *
+ * @param dir File descriptor of the parent directory.
+ *
+ * @param path Name/subpath of the file to remove, relative to the
+ *   parent directory.
+ *
+ * @return 0 if the file exists, non-zero otherwise.
+ */
+int dir_writer_remove(int dir, const char *src);

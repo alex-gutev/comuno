@@ -23,6 +23,17 @@
 
 #include <stdint.h>
 
+#include <sys/stat.h>
+
+#ifdef __APPLE__
+#include <sys/time.h>
+#endif // __APPLE__
+
+/**
+ * Flag indicating that existing files should not be overwritten.
+ */
+#define CREAT_FLAG_EXCLUSIVE 1
+
 /**
  * File type constants
  */
@@ -63,3 +74,17 @@ struct file_attributes {
 	uint64_t modification_time;
 	uint64_t access_time;
 };
+
+/* Platform Time Types */
+
+/**
+ * Platform dependent access and modification time type.
+ */
+
+#ifdef __APPLE__
+typedef struct timeval time_type;
+
+#else
+typedef struct timespec time_type;
+
+#endif

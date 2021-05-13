@@ -21,6 +21,13 @@
 #include <unistd.h>
 #include <fcntl.h>
 
+#include <sys/types.h>
+#include <sys/stat.h>
+
+#ifdef __APPLE__
+#include <sys/time.h>
+#endif // __APPLE_
+
 int ada_to_unix_flags(int flags) {
     int uflags = 0;
 
@@ -171,6 +178,45 @@ int file_outstream_close(void *handle) {
 
     return err;
 };
+
+int file_outstream_set_times(void *handle, uint64_t mod, uint64_t access) {
+    struct file_outstream *stream = handle;
+
+#ifdef __APPLE__
+    struct timeval times[2];
+
+    times[0].tv_sec = access;
+    times[0].tv_usec = access;
+
+    times[1].tv_sec = mod;
+    times[1].tv_usec = 0;
+
+    return futimes(stream->fd, times);
+
+#else
+    struct timespec times[2];
+
+    times[0].tv_sec = access;
+    times[0].tv_nsec = 0;
+
+    times[1].tv_sec = mod;
+    times[1].tv_nsec = 0;
+
+    return futimens(fd, times);
+
+#endif
+}
+
+int file_outstream_set_mode(void *handle, uint64_t mode) {
+    struct file_outstream *stream = handle;
+
+    return fchmod(stream->fd, mode);
+}
+int file_outstream_set_owner(void *handle, const struct file_attributes *attr) {
+    struct file_outstream *stream = handle;
+
+    return fchown(stream->fd, attr->user, attr->group);
+}
 
 int file_outstream_seek(void *handle, size_t offset) {
     struct file_outstream *stream = handle;
