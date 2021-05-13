@@ -164,6 +164,26 @@ package body File_Streams is
                                  return C.Int;
    pragma Import (C, File_Outstream_Write);
 
+   function File_Outstream_Set_Times (Handle      : Handle_Ptr;
+                                      Mod_Time    : C_Types.Timestamp;
+                                      Access_Time : C_Types.Timestamp)
+                                     return C.Int;
+   pragma Import (C, File_Outstream_Set_Times);
+
+   function File_Outstream_Set_Mode(Handle : Handle_Ptr; Mode : C_Types.Attribute) return C.Int;
+   pragma Import (C, File_Outstream_Set_Mode);
+
+   function File_Outstream_Set_Owner(Handle : Handle_Ptr; Attributes : C_Types.Attributes) return C.Int;
+   pragma Import (C, File_Outstream_Set_Owner);
+
+
+   --
+   -- Update_Times
+   --
+   --  Update the access and modification time of the underlying file
+   --  to the values given in the Access_Time and Mod_Time fields.
+   --
+   procedure Update_Times(This : in File_Outstream);
 
    -- Initialization --
 
@@ -191,7 +211,8 @@ package body File_Streams is
    begin
       Try_Op(Open'Access);
 
-      return (Limited_Controlled with Handle => Handle);
+      return (Limited_Controlled with Handle => Handle,
+              others => <>);
 
    end Create;
 
@@ -220,7 +241,7 @@ package body File_Streams is
    begin
       Try_Op(Open'Access);
 
-      return (Limited_Controlled with Handle => Handle);
+      return (Limited_Controlled with Handle => Handle, others => <>);
 
    end Create;
 
@@ -248,10 +269,72 @@ package body File_Streams is
 
    overriding procedure Close (This : in out File_Outstream) is
    begin
+      if This.Set_Times then
+         Update_Times(This);
+      end if;
+
       if not Close_Outstream(This) then
          raise Streams.Close_Error;
       end if;
    end Close;
+
+   -- Setting Times --
+
+   procedure Set_Times (This : in out File_Outstream; Attributes : File_System.Attributes) is
+   begin
+      This.Set_Times   := True;
+      This.Mod_Time    := Attributes.Modification_Time;
+      This.Access_Time := Attributes.Access_Time;
+
+   end Set_Times;
+
+   procedure Update_Times(This : in File_Outstream) is
+
+      procedure Update is
+      begin
+         if File_Outstream_Set_Times
+           (This.Handle,
+            C_Types.To_Unix_Time(This.Mod_Time),
+            C_Types.To_Unix_Time(This.Access_Time)) /= 0 then
+
+            raise Directory_Writers.Set_Attributes_Error;
+
+         end if;
+      end Update;
+
+   begin
+
+      Try_Op(Update'Access);
+
+   end Update_Times;
+
+   -- Setting Attributes --
+
+   procedure Set_Attributes (This : in out File_Outstream; Attributes : File_System.Attributes) is
+
+      C_Attrs : C_Types.Attributes := C_Types.To_C(Attributes);
+
+      procedure Set_Mode is
+      begin
+         if File_Outstream_Set_Mode(This.Handle, C_Attrs.Mode) /= 0 then
+            raise Directory_Writers.Set_Attributes_Error;
+         end if;
+      end Set_Mode;
+
+      procedure Set_Owner is
+      begin
+         if File_Outstream_Set_Owner(This.Handle, C_Attrs) /= 0 then
+            raise Directory_Writers.Set_Attributes_Error;
+         end if;
+      end Set_Owner;
+
+   begin
+
+      Try_Op(Set_Mode'Access);
+      Try_Op(Set_Owner'Access);
+
+   end Set_Attributes;
+
 
 
    -- Writing Data --

@@ -12,6 +12,7 @@ pragma License (GPL);
 with Ada.Finalization;
 with Interfaces.C;
 
+with File_System;
 with Streams;
 with Directory_Writers;
 with C_Types;
@@ -114,6 +115,47 @@ package File_Streams is
                     Permissions : File_Permissions := Directory_Writers.Permission_User_Rwx)
                    return File_Outstream;
 
+   --
+   -- Set_Times
+   --
+   --  Set the access and modification times of the underlying file.
+   --
+   --  Parameters:
+   --
+   --   This: File output stream
+   --
+   --   Attributes: Attributes record containing the new access and
+   --               modification times.
+   --
+   --  Exceptions:
+   --
+   --   A Directory_Writers.Set_Attributes_Error is raised when
+   --   failing to set the times.
+   --
+   procedure Set_Times (This : in out File_Outstream; Attributes : File_System.Attributes);
+
+   --
+   -- Set_Times
+   --
+   --  Set the permission and owner attributes of the underlying file.
+   --
+   --  Parameters:
+   --
+   --   This: File output stream
+   --
+   --   Attributes: Attributes record containing the new permissions,
+   --               owner and group.
+   --
+   --  Exceptions:
+   --
+   --   A Directory_Writers.Set_Attributes_Error is raised when
+   --   failing to set the attributes.
+   --
+   procedure Set_Attributes (This : in out File_Outstream; Attributes : File_System.Attributes);
+
+
+   -- Outstream Operations
+
    overriding procedure Finalize (This : in out File_Outstream);
 
    overriding procedure Close (This : in out File_Outstream);
@@ -136,6 +178,14 @@ private
    type File_Outstream is new Ada.Finalization.Limited_Controlled
       and Streams.Outstream with record
          Handle : Handle_Ptr;
+
+         -- Flag for whether the access and modification times should
+         -- be updated, to Access_Time and Mod_Time respectively,
+         -- before closing the file.
+         Set_Times : Boolean := False;
+
+         Mod_Time    : File_System.Time;
+         Access_Time : File_System.Time;
       end record;
 
 end File_Streams;
