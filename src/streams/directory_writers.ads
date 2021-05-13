@@ -249,4 +249,14 @@ package Directory_Writers is
    --
    Set_Attributes_Error : exception;
 
+   --
+   -- Exception representing an error when deleting a file.
+   --
+   Remove_Error : exception;
+
+   --
+   -- Exception representing an error when renaming a file.
+   --
+   Rename_Error : exception;
+
 end Directory_Writers;
